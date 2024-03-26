@@ -56,24 +56,17 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
                 var detailedWorkspaceInfo = workspaceDetailResponse.readEntity(WorkspaceLoad.class);
 
                 //get productStore information for each Product
-                List<AngularRouteDTO> angularRoutes = new ArrayList<>();
-                List<WebComponentRouteDTO> webComponentRoutes = new ArrayList<>();
+                List<RouteDTO> routes = new ArrayList<>();
                 detailedWorkspaceInfo.getProducts().forEach(p -> {
                     try (Response psResponse = productStoreClient.getProductByName(p.getProductName())) {
                         var product = psResponse.readEntity(ProductPSV1.class);
                         product.getMicrofrontends().forEach(mfe -> {
-                            if (mfe.getTechnology().equalsIgnoreCase(TechnologiesDTO.ANGULAR.toString())) {
-                                angularRoutes.add(mapper.mapRoute(mfe, product, p.getMicrofrontends(),
-                                        getWorkspaceConfigRequestDTO.getBaseUrl()));
-                            } else {
-                                webComponentRoutes
-                                        .add(mapper.mapWcRoute(mfe, product, p.getMicrofrontends(),
-                                                getWorkspaceConfigRequestDTO.getBaseUrl()));
-                            }
+                            routes.add(mapper.mapRoute(mfe, product, p.getMicrofrontends(),
+                                    getWorkspaceConfigRequestDTO.getBaseUrl()));
                         });
                     }
                 });
-                responseDTO = mapper.updateConfigRoutes(responseDTO, angularRoutes, webComponentRoutes);
+                responseDTO.setRoutes(routes);
             }
             //get theme info
             try (Response themeResponse = themeClient.getThemeByName(workspaceInfo.getTheme())) {

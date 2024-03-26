@@ -33,43 +33,21 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "pageNumber", ignore = true)
     ProductItemSearchCriteriaPSV1 map(WorkspaceAbstract workspaceInfo);
 
-    default AngularRouteDTO mapRoute(MicrofrontendPSV1 mfe, ProductPSV1 product,
+    default RouteDTO mapRoute(MicrofrontendPSV1 mfe, ProductPSV1 product,
             List<Microfrontend> wsMfes, String workspaceBasePath) {
-        AngularRouteDTO angularRoute = new AngularRouteDTO();
-        angularRoute.setRemoteEntryUrl(mfe.getRemoteEntry());
-        angularRoute.setExposedModule(mfe.getExposedModule());
-        angularRoute.setProductName(product.getName());
-        angularRoute.setAppId(mfe.getAppId());
-        angularRoute.setTechnology(TechnologiesDTO.ANGULAR);
+        RouteDTO route = new RouteDTO();
+        route.setRemoteEntryUrl(mfe.getRemoteEntry());
+        route.setExposedModule(mfe.getExposedModule());
+        route.setProductName(product.getName());
+        route.setAppId(mfe.getAppId());
+        route.setTechnology(TechnologiesDTO.ANGULAR);
         var selectedMfe = wsMfes.stream().filter(microfrontend -> microfrontend.getMfeId().equals(mfe.getAppId())).findFirst();
-        selectedMfe.ifPresent(microfrontend -> angularRoute.setBasePath(microfrontend.getBasePath()));
-        angularRoute.setUrl(workspaceBasePath);
-        angularRoute.setPathMatch(PathMatchDTO.FULL); //temp fixed value
-        return angularRoute;
-    }
-
-    default WebComponentRouteDTO mapWcRoute(MicrofrontendPSV1 mfe, ProductPSV1 product,
-            List<Microfrontend> wsMfes, String workspaceBasePath) {
-        WebComponentRouteDTO wcRoute = new WebComponentRouteDTO();
-        wcRoute.setRemoteEntryUrl(mfe.getRemoteEntry());
-        wcRoute.setExposedModule(mfe.getExposedModule());
-        wcRoute.setProductName(product.getName());
-        wcRoute.setAppId(mfe.getAppId());
-        wcRoute.setTechnology(TechnologiesDTO.WEBCOMPONENT);
-        var selectedMfe = wsMfes.stream().filter(microfrontend -> microfrontend.getMfeId().equals(mfe.getAppId())).findFirst();
-        selectedMfe.ifPresent(microfrontend -> wcRoute.setBasePath(microfrontend.getBasePath()));
-        wcRoute.setUrl(workspaceBasePath);
-        wcRoute.setPathMatch(PathMatchDTO.FULL); //temp fixed value
-        return wcRoute;
-    }
-
-    default GetWorkspaceConfigResponseDTO updateConfigRoutes(GetWorkspaceConfigResponseDTO responseDTO,
-            List<AngularRouteDTO> angularRoutes,
-            List<WebComponentRouteDTO> webComponentRoutes) {
-        GetWorkspaceConfigResponseRoutesDTO routesDTO = new GetWorkspaceConfigResponseRoutesDTO();
-        routesDTO.setAngularRoutes(angularRoutes);
-        routesDTO.setWebComponentRoutes(webComponentRoutes);
-        responseDTO.setRoutes(routesDTO);
-        return responseDTO;
+        selectedMfe.ifPresent(microfrontend -> route.setBasePath(microfrontend.getBasePath()));
+        route.setUrl(workspaceBasePath);
+        route.setPathMatch(PathMatchDTO.FULL); //temp fixed value
+        if (mfe.getRemoteName() != null) {
+            route.setRemoteName(mfe.getRemoteName());
+        }
+        return route;
     }
 }

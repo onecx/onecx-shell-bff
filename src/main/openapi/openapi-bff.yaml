@@ -39,6 +39,35 @@ paths:
         '404':
           description: 'Not Found'
 
+  /workspaceConfig/themes/{name}/favicon:
+    get:
+      x-onecx:
+        permissions:
+          workspaceConfig:
+            - read
+      tags:
+        - "WorkspaceConfig"
+      description: Load favicon by theme name
+      operationId: getThemeFaviconByName
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            image/*:
+              schema:
+                minimum: 1
+                maximum: 110000
+                type: string
+                format: binary
+        404:
+          description: Not found
+
   /userProfile:
     get:
       x-onecx:

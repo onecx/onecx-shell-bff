@@ -6,9 +6,15 @@ import java.util.List;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.RestResponse;
+import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import org.tkit.onecx.shell.bff.rs.mappers.ExceptionMapper;
 import org.tkit.onecx.shell.bff.rs.mappers.WorkspaceConfigMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
@@ -18,6 +24,7 @@ import gen.org.tkit.onecx.shell.bff.rs.internal.WorkspaceConfigApiService;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.theme.client.api.ThemesApi;
 import gen.org.tkit.onecx.theme.client.model.Theme;
+import gen.org.tkit.onecx.user.profile.client.model.ProblemDetailResponse;
 import gen.org.tkit.onecx.workspace.client.api.WorkspaceExternalApi;
 import gen.org.tkit.onecx.workspace.client.model.WorkspaceLoad;
 import gen.org.tkit.onecx.workspace.client.model.WorkspacePageResult;
@@ -41,6 +48,9 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
 
     @Inject
     WorkspaceConfigMapper mapper;
+
+    @Inject
+    ExceptionMapper exceptionMapper;
 
     @Override
     public Response getWorkspaceConfig(GetWorkspaceConfigRequestDTO getWorkspaceConfigRequestDTO) {
@@ -76,5 +86,35 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
 
         }
         return Response.status(Response.Status.OK).entity(responseDTO).build();
+    }
+
+    @Override
+    public Response getThemeFaviconByName(String name) {
+        Response.ResponseBuilder responseBuilder;
+        try (Response response = themeClient.getThemeFaviconByName(name)) {
+            var contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
+            var contentLength = response.getHeaderString(HttpHeaders.CONTENT_LENGTH);
+            var body = response.readEntity(byte[].class);
+            if (contentType != null && body.length != 0) {
+                responseBuilder = Response.status(response.getStatus())
+                        .header(HttpHeaders.CONTENT_TYPE, contentType)
+                        .header(HttpHeaders.CONTENT_LENGTH, contentLength)
+                        .entity(body);
+            } else {
+                responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            }
+            return responseBuilder.build();
+        }
+    }
+
+    @ServerExceptionMapper
+    public RestResponse<ProblemDetailResponseDTO> constraint(ConstraintViolationException ex) {
+        return exceptionMapper.constraint(ex);
+    }
+
+    @ServerExceptionMapper
+    public Response restException(WebApplicationException ex) {
+        return Response.status(ex.getResponse().getStatus())
+                .entity(exceptionMapper.map(ex.getResponse().readEntity(ProblemDetailResponse.class))).build();
     }
 }

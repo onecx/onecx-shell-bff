@@ -2,17 +2,21 @@ package org.tkit.onecx.shell.bff.rs;
 
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
+import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
 import java.util.List;
 
 import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
+import org.mockserver.model.Header;
 import org.mockserver.model.JsonBody;
 import org.mockserver.model.MediaType;
 import org.tkit.onecx.shell.bff.rs.controllers.WorkspaceConfigRestController;
@@ -105,5 +109,111 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .extract().as(GetWorkspaceConfigResponseDTO.class);
 
         Assertions.assertNotNull(output);
+    }
+
+    @Test
+    void getThemeFaviconTest() {
+
+        byte[] bytesRes = new byte[] { (byte) 0xe0, 0x4f, (byte) 0xd0,
+                0x20, (byte) 0xea, 0x3a, 0x69, 0x10, (byte) 0xa2, (byte) 0xd8, 0x08, 0x00, 0x2b,
+                0x30, 0x30, (byte) 0x9d };
+
+        // create mock rest endpoint for get theme by name from theme-svc
+        mockServerClient.when(request().withPath("/v1/themes/theme1/favicon").withMethod(HttpMethod.GET))
+                .withId("mockFavicon")
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withHeaders(
+                                new Header(HttpHeaders.CONTENT_TYPE, "image/png"))
+                        .withBody(bytesRes));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", "theme1")
+                .get("/themes/{name}/favicon")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .header(HttpHeaders.CONTENT_TYPE, "image/png")
+                .extract().body().asByteArray();
+
+        Assertions.assertNotNull(output);
+        mockServerClient.clear("mockFavicon");
+
+    }
+
+    @Test
+    void getThemeFavicon_shouldReturnBadRequest_whenBodyEmpty() {
+
+        byte[] bytesRes = null;
+
+        mockServerClient.when(request().withPath("/v1/themes/theme1/favicon").withMethod(HttpMethod.GET))
+                .withId("mockFavicon")
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withHeaders(
+                                new Header(HttpHeaders.CONTENT_TYPE, "image/png"))
+                        .withBody(bytesRes));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", "theme1")
+                .get("/themes/{name}/favicon")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+        mockServerClient.clear("mockFavicon");
+
+    }
+
+    @Test
+    void getThemeFavicon_shouldReturnBadRequest_whenContentTypeEmpty() {
+
+        byte[] bytesRes = new byte[] { (byte) 0xe0, 0x4f, (byte) 0xd0,
+                0x20, (byte) 0xea, 0x3a, 0x69, 0x10, (byte) 0xa2, (byte) 0xd8, 0x08, 0x00, 0x2b,
+                0x30, 0x30, (byte) 0x9d };
+
+        mockServerClient.when(request().withPath("/v1/themes/theme1/favicon").withMethod(HttpMethod.GET))
+                .withId("mockFavicon")
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withBody(bytesRes));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", "theme1")
+                .get("/themes/{name}/favicon")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
+        mockServerClient.clear("mockFavicon");
+
+    }
+
+    @Test
+    void getImage_shouldReturnBadRequest_whenAllEmpty() {
+
+        mockServerClient.when(request().withPath("/v1/themes/theme1/favicon").withMethod(HttpMethod.GET))
+                .withId("mockFavicon")
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode()));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", "theme1")
+                .get("/themes/{name}/favicon")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+        mockServerClient.clear("mockFavicon");
+
     }
 }

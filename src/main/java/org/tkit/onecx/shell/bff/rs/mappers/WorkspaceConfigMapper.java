@@ -27,6 +27,7 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "baseUrl", source = "requestDTO.baseUrl")
     WorkspaceDTO map(WorkspaceAbstract workspaceInfo, GetWorkspaceConfigRequestDTO requestDTO);
 
+    @Mapping(expression = "java( String.valueOf(themeInfo.getProperties()) )", target = "properties")
     ThemeDTO mapTheme(Theme themeInfo);
 
     @Mapping(target = "productNames", source = "products")

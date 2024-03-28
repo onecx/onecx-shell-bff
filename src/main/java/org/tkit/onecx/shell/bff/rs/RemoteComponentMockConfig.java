@@ -14,25 +14,25 @@ public interface RemoteComponentMockConfig {
     @WithName("names")
     List<String> names();
 
-    @WithName("baseUrl")
+    @WithName("base-url")
     Map<String, String> baseUrl();
 
-    @WithName("appId")
+    @WithName("app-id")
     Map<String, String> appId();
 
-    @WithName("productName")
+    @WithName("product-name")
     Map<String, String> productName();
 
-    @WithName("remoteBaseUrl")
+    @WithName("remote-base-url")
     Map<String, String> remoteBaseUrl();
 
-    @WithName("remoteEntryUrl")
+    @WithName("remote-entry-url")
     Map<String, String> remoteEntryUrl();
 
     @WithName("slot")
     Map<String, String> slot();
 
-    @WithName("exposedModule")
+    @WithName("exposed-module")
     Map<String, String> exposedModule();
 
 }

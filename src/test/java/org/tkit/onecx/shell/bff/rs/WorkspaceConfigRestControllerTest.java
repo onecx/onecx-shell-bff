@@ -117,6 +117,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
         //CHECK FOR MOCKED REMOTE COMPONENTS
         //SHOULD BE REMOVED AFTER IMPLEMENTATION
         Assertions.assertEquals(output.getRemoteComponents().get(0).getName(), "PortalMenu");
+        Assertions.assertEquals(output.getRemoteComponents().get(0).getAppId(), "appId");
         Assertions.assertEquals(output.getShellRemoteComponents().get(0).getSlotName(), "menu");
 
         mockServerClient.clear("mockWS");

@@ -3,11 +3,9 @@ package org.tkit.onecx.shell.bff.rs;
 import java.util.List;
 import java.util.Map;
 
-import io.quarkus.runtime.annotations.StaticInitSafe;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithName;
 
-@StaticInitSafe
 @ConfigMapping(prefix = "onecx.component.mock")
 public interface RemoteComponentMockConfig {
 

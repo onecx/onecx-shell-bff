@@ -173,6 +173,9 @@ components:
 
     Workspace:
       type: object
+      required:
+        - name
+        - baseUrl
       properties:
         name:
           type: string

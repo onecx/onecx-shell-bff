@@ -26,7 +26,7 @@ import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @TestHTTPEndpoint(UserProfileRestController.class)
-public class UserProfileControllerTest extends AbstractTest {
+class UserProfileControllerTest extends AbstractTest {
 
     @InjectMockServerClient
     MockServerClient mockServerClient;
@@ -57,5 +57,27 @@ public class UserProfileControllerTest extends AbstractTest {
                 .extract().as(GetUserProfileResponseDTO.class);
 
         Assertions.assertNotNull(output);
+
+        mockServerClient.clear("mock");
+    }
+
+    @Test
+    void getUserProfile_svc_error_Test() {
+
+        // create mock rest endpoint for user-profile-svc
+        mockServerClient.when(request().withPath("/v1/userProfile/me").withMethod(HttpMethod.GET))
+                .withId("mock")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode()));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .get()
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode());
+
+        Assertions.assertNotNull(output);
+        mockServerClient.clear("mock");
     }
 }

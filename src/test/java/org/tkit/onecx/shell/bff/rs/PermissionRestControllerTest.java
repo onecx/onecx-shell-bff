@@ -21,13 +21,14 @@ import gen.org.tkit.onecx.permission.model.ApplicationPermissions;
 import gen.org.tkit.onecx.permission.model.PermissionRequest;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.GetPermissionsRequestDTO;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.GetPermissionsResponseDTO;
+import gen.org.tkit.onecx.shell.bff.rs.internal.model.ProblemDetailResponseDTO;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @TestHTTPEndpoint(PermissionRestController.class)
-public class PermissionRestControllerTest extends AbstractTest {
+class PermissionRestControllerTest extends AbstractTest {
 
     @InjectMockServerClient
     MockServerClient mockServerClient;
@@ -86,5 +87,79 @@ public class PermissionRestControllerTest extends AbstractTest {
                 List.of("permissions#admin-write", "permissions#admin-read", "permission#read",
                         "workspaceConfig#read", "workspaceConfig#delete", "workspaceConfig#write",
                         "workspaceConfig#write", "userProfile#read", "userProfile#delete", "userProfile#write")));
+
+        mockServerClient.clear("mockPermission2");
+        mockServerClient.clear("mockPermission");
+    }
+
+    @Test
+    void getPermissions_missing_input_Test() {
+        String AUTHTOKEN = keycloakClient.getAccessToken(ADMIN);
+
+        GetPermissionsRequestDTO requestDTO = new GetPermissionsRequestDTO();
+        var output = given()
+                .when()
+                .auth().oauth2(AUTHTOKEN)
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(requestDTO)
+                .post()
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ProblemDetailResponseDTO.class);
+        Assertions.assertNotNull(output);
+    }
+
+    @Test
+    void getPermissions_svc_error_Test() {
+
+        ApplicationPermissions applicationPermissions = new ApplicationPermissions();
+        Map<String, Set<String>> permissions = new HashMap<>();
+        permissions.put("workspaceConfig", Set.of("read", "write", "delete"));
+        permissions.put("userProfile", Set.of("read", "write", "delete"));
+        permissions.put("permission", Set.of("read"));
+        permissions.put("permissions", Set.of("admin-write", "admin-read"));
+        applicationPermissions.setPermissions(permissions);
+        applicationPermissions.setAppId("onecx-shell-bff");
+        applicationPermissions.setProductName("onecx-shell");
+
+        String AUTHTOKEN = keycloakClient.getAccessToken(ADMIN);
+        PermissionRequest permissionRequest = new PermissionRequest();
+        permissionRequest.setToken("Bearer " + AUTHTOKEN);
+        // create mock rest endpoint for permission svc
+        mockServerClient
+                .when(request().withPath("/v1/permissions/user/applications/onecx-shell-bff").withMethod(HttpMethod.POST)
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(permissionRequest)))
+                .withId("mockPermission")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(applicationPermissions)));
+
+        // create mock rest endpoint for permission svc
+        mockServerClient.when(request().withPath("/v1/permissions/user/product1/app1").withMethod(HttpMethod.POST)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withBody(JsonBody.json(permissionRequest)))
+                .withId("mockPermission2")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode()));
+
+        GetPermissionsRequestDTO requestDTO = new GetPermissionsRequestDTO();
+        requestDTO.setAppId("app1");
+        requestDTO.setProductName("product1");
+        var output = given()
+                .when()
+                .auth().oauth2(AUTHTOKEN)
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(requestDTO)
+                .post()
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode());
+        Assertions.assertNotNull(output);
+
+        mockServerClient.clear("mockPermission2");
+        mockServerClient.clear("mockPermission");
+
     }
 }

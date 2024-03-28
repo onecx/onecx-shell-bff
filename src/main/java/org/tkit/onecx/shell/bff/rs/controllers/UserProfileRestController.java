@@ -3,9 +3,11 @@ package org.tkit.onecx.shell.bff.rs.controllers;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.onecx.shell.bff.rs.mappers.UserProfileMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
@@ -31,5 +33,10 @@ public class UserProfileRestController implements UserProfileApiService {
             return Response.status(response.getStatus())
                     .entity(mapper.map(response.readEntity(UserProfile.class))).build();
         }
+    }
+
+    @ServerExceptionMapper
+    public Response restException(WebApplicationException ex) {
+        return Response.status(ex.getResponse().getStatus()).build();
     }
 }

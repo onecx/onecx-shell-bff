@@ -3,34 +3,39 @@ package org.tkit.onecx.shell.bff.rs;
 import java.util.List;
 import java.util.Map;
 
+import io.quarkus.runtime.annotations.StaticInitSafe;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithName;
 
+@StaticInitSafe
 @ConfigMapping(prefix = "onecx.component.mock")
 public interface RemoteComponentMockConfig {
 
-    @WithName("names")
-    List<String> names();
+    @WithName("keys")
+    List<String> keys();
 
-    @WithName("base-url")
+    @WithName("baseurl")
     Map<String, String> baseUrl();
 
-    @WithName("app-id")
+    @WithName("name")
+    Map<String, String> name();
+
+    @WithName("appid")
     Map<String, String> appId();
 
-    @WithName("product-name")
+    @WithName("productname")
     Map<String, String> productName();
 
-    @WithName("remote-base-url")
+    @WithName("remotebaseurl")
     Map<String, String> remoteBaseUrl();
 
-    @WithName("remote-entry-url")
+    @WithName("remoteentryurl")
     Map<String, String> remoteEntryUrl();
 
     @WithName("slot")
     Map<String, String> slot();
 
-    @WithName("exposed-module")
+    @WithName("exposedmodule")
     Map<String, String> exposedModule();
 
 }

@@ -129,20 +129,19 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
         List<RemoteComponentDTO> remoteComponents = new ArrayList<>();
         List<RemoteComponentMappingDTO> remoteShellComponents = new ArrayList<>();
 
-        mockConfig.names().forEach(componentKey -> {
-            var upperCaseKey = componentKey.toUpperCase();
+        mockConfig.keys().forEach(componentKey -> {
             RemoteComponentDTO componentDTO = new RemoteComponentDTO();
-            componentDTO.setAppId(mockConfig.appId().get(upperCaseKey));
-            componentDTO.setBaseUrl(mockConfig.baseUrl().get(upperCaseKey));
-            componentDTO.setRemoteEntryUrl(mockConfig.remoteEntryUrl().get(upperCaseKey));
-            componentDTO.setExposedModule(mockConfig.exposedModule().get(upperCaseKey));
-            componentDTO.setProductName(mockConfig.productName().get(upperCaseKey));
-            componentDTO.setName(componentKey);
+            componentDTO.setName(mockConfig.name().get(componentKey));
+            componentDTO.setAppId(mockConfig.appId().get(componentKey));
+            componentDTO.setBaseUrl(mockConfig.baseUrl().get(componentKey));
+            componentDTO.setRemoteEntryUrl(mockConfig.remoteEntryUrl().get(componentKey));
+            componentDTO.setExposedModule(mockConfig.exposedModule().get(componentKey));
+            componentDTO.setProductName(mockConfig.productName().get(componentKey));
             remoteComponents.add(componentDTO);
 
             RemoteComponentMappingDTO componentMappingDTO = new RemoteComponentMappingDTO();
-            componentMappingDTO.setRemoteComponent(componentKey);
-            componentMappingDTO.setSlotName(mockConfig.slot().get(upperCaseKey));
+            componentMappingDTO.setRemoteComponent(mockConfig.name().get(componentKey));
+            componentMappingDTO.setSlotName(mockConfig.slot().get(componentKey));
             remoteShellComponents.add(componentMappingDTO);
         });
         responseDTO.setRemoteComponents(remoteComponents);

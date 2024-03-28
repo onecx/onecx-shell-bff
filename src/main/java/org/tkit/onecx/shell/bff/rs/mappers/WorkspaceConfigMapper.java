@@ -16,6 +16,7 @@ import gen.org.tkit.onecx.workspace.client.model.WorkspaceSearchCriteria;
 
 @Mapper
 public interface WorkspaceConfigMapper {
+
     @Mapping(target = "themeName", ignore = true)
     @Mapping(target = "productName", ignore = true)
     @Mapping(target = "pageSize", constant = "1")

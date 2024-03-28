@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import org.tkit.onecx.shell.bff.rs.RemoteComponentMockConfig;
 import org.tkit.onecx.shell.bff.rs.mappers.ExceptionMapper;
 import org.tkit.onecx.shell.bff.rs.mappers.WorkspaceConfigMapper;
 import org.tkit.quarkus.log.cdi.LogService;
@@ -51,6 +52,9 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
     @Inject
     ExceptionMapper exceptionMapper;
 
+    @Inject
+    RemoteComponentMockConfig mockConfig;
+
     @Override
     public Response getWorkspaceConfig(GetWorkspaceConfigRequestDTO getWorkspaceConfigRequestDTO) {
         GetWorkspaceConfigResponseDTO responseDTO = new GetWorkspaceConfigResponseDTO();
@@ -84,6 +88,8 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
                     var themeInfo = themeResponse.readEntity(Theme.class);
                     responseDTO.setTheme(mapper.mapTheme(themeInfo));
                 }
+                //call remoteComponent Mocks => should be removed after implementation
+                responseDTO = mockRemoteComponents(responseDTO);
                 return Response.status(Response.Status.OK).entity(responseDTO).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND.getStatusCode(),
@@ -109,6 +115,38 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
             }
             return responseBuilder.build();
         }
+    }
+
+    /**
+     * SHOULD BE REMOVED AFTER IMPLEMENTATION
+     *
+     * Method to mock remoteComponents based on application.properties
+     *
+     * @param responseDTO responseDTO without remoteComponents
+     * @return responseDTO with mocked remoteComponents
+     */
+    public GetWorkspaceConfigResponseDTO mockRemoteComponents(GetWorkspaceConfigResponseDTO responseDTO) {
+        List<RemoteComponentDTO> remoteComponents = new ArrayList<>();
+        List<RemoteComponentMappingDTO> remoteShellComponents = new ArrayList<>();
+
+        mockConfig.names().forEach(componentKey -> {
+            RemoteComponentDTO componentDTO = new RemoteComponentDTO();
+            componentDTO.setAppId(mockConfig.appId().get(componentKey));
+            componentDTO.setBaseUrl(mockConfig.baseUrl().get(componentKey));
+            componentDTO.setRemoteEntryUrl(mockConfig.remoteEntryUrl().get(componentKey));
+            componentDTO.setExposedModule(mockConfig.exposedModule().get(componentKey));
+            componentDTO.setProductName(mockConfig.productName().get(componentKey));
+            componentDTO.setName(componentKey);
+            remoteComponents.add(componentDTO);
+
+            RemoteComponentMappingDTO componentMappingDTO = new RemoteComponentMappingDTO();
+            componentMappingDTO.setRemoteComponent(componentKey);
+            componentMappingDTO.setSlotName(mockConfig.slot().get(componentKey));
+            remoteShellComponents.add(componentMappingDTO);
+        });
+        responseDTO.setRemoteComponents(remoteComponents);
+        responseDTO.setShellRemoteComponents(remoteShellComponents);
+        return responseDTO;
     }
 
     @ServerExceptionMapper

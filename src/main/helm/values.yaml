@@ -8,7 +8,9 @@ app:
       enabled: true
       spec:
         permissions:
-          example:
+          workspaceConfig:
             read: permission on all GET requests and POST search
-            write: permission on PUT, POST, PATCH requests, where objects are saved or updated
-            delete: permission on all DELETE requests
+          userProfile:
+            read: permission on all GET requests and POST search
+          permission:
+            read: permission on all GET requests and POST search

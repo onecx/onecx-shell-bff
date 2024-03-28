@@ -13,7 +13,9 @@
         "json": {
           "appId": "onecx-shell-bff",
           "permissions": {
-            "example": ["read", "write", "delete"],
+            "workspaceConfig": ["read", "write", "delete"],
+            "userProfile": ["read", "write", "delete"],
+            "permission": ["read"],
             "permissions": ["admin-write","admin-read"]
           }
         },
@@ -35,7 +37,6 @@
         "json": {
           "appId": "onecx-shell-bff",
           "permissions": {
-            "example": ["read"],
             "permissions": ["admin-write","admin-read"]
           }
         },

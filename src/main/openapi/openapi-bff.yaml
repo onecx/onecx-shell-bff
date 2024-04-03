@@ -10,10 +10,6 @@ servers:
 paths:
   /workspaceConfig:
     post:
-      x-onecx:
-        permissions:
-          workspaceConfig:
-            - read
       tags:
         - "WorkspaceConfig"
       requestBody:
@@ -41,10 +37,6 @@ paths:
 
   /workspaceConfig/themes/{name}/favicon:
     get:
-      x-onecx:
-        permissions:
-          workspaceConfig:
-            - read
       tags:
         - "WorkspaceConfig"
       description: Load favicon by theme name
@@ -70,10 +62,6 @@ paths:
 
   /userProfile:
     get:
-      x-onecx:
-        permissions:
-          userProfile:
-            - read
       tags:
         - userProfile
       operationId: getUserProfile
@@ -95,10 +83,6 @@ paths:
 
   /permissions:
     post:
-      x-onecx:
-        permissions:
-          permission:
-            - read
       tags:
         - permission
       operationId: getPermissions

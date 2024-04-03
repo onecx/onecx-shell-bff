@@ -2,15 +2,3 @@ app:
   name: bff
   image:
     repository: "onecx/onecx-shell-bff"
-  operator:
-    # Permission
-    permission:
-      enabled: true
-      spec:
-        permissions:
-          workspaceConfig:
-            read: permission on all GET requests and POST search
-          userProfile:
-            read: permission on all GET requests and POST search
-          permission:
-            read: permission on all GET requests and POST search

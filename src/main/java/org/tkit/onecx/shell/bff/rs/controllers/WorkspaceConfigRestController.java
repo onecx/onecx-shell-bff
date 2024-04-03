@@ -61,6 +61,7 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
 
         //get base workspace info
         try (Response response = workspaceClient.searchWorkspaces(mapper.map(getWorkspaceConfigRequestDTO))) {
+            Response.ResponseBuilder responseBuilder = null;
             if (!response.readEntity(WorkspacePageResult.class).getStream().isEmpty()) {
                 var workspaceInfo = response.readEntity(WorkspacePageResult.class).getStream().get(0);
                 responseDTO.setWorkspace(mapper.map(workspaceInfo, getWorkspaceConfigRequestDTO));
@@ -90,11 +91,12 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
                 }
                 //call remoteComponent Mocks => should be removed after implementation
                 responseDTO = mockRemoteComponents(responseDTO);
-                return Response.status(Response.Status.OK).entity(responseDTO).build();
+                responseBuilder = Response.status(Response.Status.OK).entity(responseDTO);
             } else {
-                return Response.status(Response.Status.NOT_FOUND.getStatusCode(),
-                        "No workspace with matching url found").build();
+                responseBuilder = Response.status(Response.Status.NOT_FOUND.getStatusCode(),
+                        "No workspace with matching url found");
             }
+            return responseBuilder.build();
         }
     }
 

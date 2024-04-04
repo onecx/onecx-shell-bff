@@ -26,8 +26,8 @@ import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.theme.client.api.ThemesApi;
 import gen.org.tkit.onecx.theme.client.model.Theme;
 import gen.org.tkit.onecx.workspace.client.api.WorkspaceExternalApi;
+import gen.org.tkit.onecx.workspace.client.model.Workspace;
 import gen.org.tkit.onecx.workspace.client.model.WorkspaceLoad;
-import gen.org.tkit.onecx.workspace.client.model.WorkspacePageResult;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
@@ -60,14 +60,14 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
         GetWorkspaceConfigResponseDTO responseDTO = new GetWorkspaceConfigResponseDTO();
 
         //get base workspace info
-        try (Response response = workspaceClient.searchWorkspaces(mapper.map(getWorkspaceConfigRequestDTO))) {
+        try (Response response = workspaceClient.getWorkspaceByUrl(mapper.map(getWorkspaceConfigRequestDTO))) {
             Response.ResponseBuilder responseBuilder = null;
-            if (!response.readEntity(WorkspacePageResult.class).getStream().isEmpty()) {
-                var workspaceInfo = response.readEntity(WorkspacePageResult.class).getStream().get(0);
-                responseDTO.setWorkspace(mapper.map(workspaceInfo, getWorkspaceConfigRequestDTO));
+            var workspaceResponse = response.readEntity(Workspace.class);
+            if (workspaceResponse != null) {
+                responseDTO.setWorkspace(mapper.map(workspaceResponse));
 
                 //getDetailed workspace info (incl. products, mfes etc.)
-                try (Response workspaceDetailResponse = workspaceClient.loadWorkspaceByName(workspaceInfo.getName())) {
+                try (Response workspaceDetailResponse = workspaceClient.loadWorkspaceByName(workspaceResponse.getName())) {
                     var detailedWorkspaceInfo = workspaceDetailResponse.readEntity(WorkspaceLoad.class);
 
                     //get productStore information for each Product
@@ -75,9 +75,8 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
                     detailedWorkspaceInfo.getProducts().forEach(p -> {
                         try (Response psResponse = productStoreClient.getProductByName(p.getProductName())) {
                             var product = psResponse.readEntity(ProductPSV1.class);
-                            product.getMicrofrontends().forEach(mfe -> {
-                                routes.add(mapper.mapRoute(mfe, product, p.getMicrofrontends()));
-                            });
+                            product.getMicrofrontends()
+                                    .forEach(mfe -> routes.add(mapper.mapRoute(mfe, product, p.getMicrofrontends())));
                         } catch (WebApplicationException ex) {
                             //skip
                         }
@@ -85,7 +84,7 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
                     responseDTO.setRoutes(routes);
                 }
                 //get theme info
-                try (Response themeResponse = themeClient.getThemeByName(workspaceInfo.getTheme())) {
+                try (Response themeResponse = themeClient.getThemeByName(workspaceResponse.getTheme())) {
                     var themeInfo = themeResponse.readEntity(Theme.class);
                     responseDTO.setTheme(mapper.mapTheme(themeInfo));
                 }

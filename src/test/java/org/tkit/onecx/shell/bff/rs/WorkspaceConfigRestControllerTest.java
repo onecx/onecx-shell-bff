@@ -6,7 +6,6 @@ import static jakarta.ws.rs.core.Response.Status.*;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.ws.rs.HttpMethod;
@@ -145,21 +144,16 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
 
     @Test
     void getWorkspaceConfig_WorkspaceNotFoundTest() {
-        WorkspaceSearchCriteria criteria = new WorkspaceSearchCriteria();
-        criteria.setBaseUrl("/w1Url");
-        criteria.setPageNumber(0);
-        criteria.setPageSize(1);
-        WorkspacePageResult pageResult = new WorkspacePageResult();
-        pageResult.setStream(new ArrayList<>());
+        GetWorkspaceByUrlRequest byUrlRequest = new GetWorkspaceByUrlRequest();
+        byUrlRequest.setUrl("/w1Url");
 
         // create mock rest endpoint for workspace search
-        mockServerClient.when(request().withPath("/v1/workspaces/search").withMethod(HttpMethod.POST)
+        mockServerClient.when(request().withPath("/v1/workspaces/byUrl").withMethod(HttpMethod.POST)
                 .withContentType(MediaType.APPLICATION_JSON)
-                .withBody(JsonBody.json(criteria)))
+                .withBody(JsonBody.json(byUrlRequest)))
                 .withId("mockWS")
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(pageResult)));
+                        .withContentType(MediaType.APPLICATION_JSON));
 
         var input = new GetWorkspaceConfigRequestDTO();
         input.setUrl("/w1Url");

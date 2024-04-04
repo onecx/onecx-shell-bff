@@ -10,22 +10,17 @@ import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteriaPS
 import gen.org.tkit.onecx.product.store.client.model.ProductPSV1;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.theme.client.model.Theme;
+import gen.org.tkit.onecx.workspace.client.model.GetWorkspaceByUrlRequest;
 import gen.org.tkit.onecx.workspace.client.model.Microfrontend;
+import gen.org.tkit.onecx.workspace.client.model.Workspace;
 import gen.org.tkit.onecx.workspace.client.model.WorkspaceAbstract;
-import gen.org.tkit.onecx.workspace.client.model.WorkspaceSearchCriteria;
 
 @Mapper
 public interface WorkspaceConfigMapper {
 
-    @Mapping(target = "themeName", ignore = true)
-    @Mapping(target = "productName", ignore = true)
-    @Mapping(target = "pageSize", constant = "1")
-    @Mapping(target = "pageNumber", constant = "0")
-    WorkspaceSearchCriteria map(GetWorkspaceConfigRequestDTO getWorkspaceConfigRequestDTO);
+    GetWorkspaceByUrlRequest map(GetWorkspaceConfigRequestDTO getWorkspaceConfigRequestDTO);
 
-    @Mapping(target = "name", source = "workspaceInfo.name")
-    @Mapping(target = "baseUrl", source = "requestDTO.baseUrl")
-    WorkspaceDTO map(WorkspaceAbstract workspaceInfo, GetWorkspaceConfigRequestDTO requestDTO);
+    WorkspaceDTO map(Workspace workspaceInfo);
 
     @Mapping(expression = "java( String.valueOf(themeInfo.getProperties()) )", target = "properties")
     ThemeDTO mapTheme(Theme themeInfo);

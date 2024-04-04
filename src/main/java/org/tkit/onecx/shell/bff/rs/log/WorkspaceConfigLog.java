@@ -14,7 +14,7 @@ public class WorkspaceConfigLog implements LogParam {
     public List<Item> getClasses() {
         return List.of(
                 this.item(10, GetWorkspaceConfigRequestDTO.class,
-                        x -> GetWorkspaceConfigRequestDTO.class.getSimpleName() + "[baseUrl:"
-                                + ((GetWorkspaceConfigRequestDTO) x).getBaseUrl() + "]"));
+                        x -> GetWorkspaceConfigRequestDTO.class.getSimpleName() + "[url:"
+                                + ((GetWorkspaceConfigRequestDTO) x).getUrl() + "]"));
     }
 }

@@ -6,7 +6,6 @@ import static jakarta.ws.rs.core.Response.Status.*;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.ws.rs.HttpMethod;
@@ -41,21 +40,19 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
 
     @Test
     void getWorkspaceConfigByBaseUrlTest() {
-        WorkspaceSearchCriteria criteria = new WorkspaceSearchCriteria();
-        criteria.setBaseUrl("/w1Url");
-        criteria.setPageNumber(0);
-        criteria.setPageSize(1);
-        WorkspacePageResult pageResult = new WorkspacePageResult();
-        pageResult.setStream(List.of(new WorkspaceAbstract().name("w1").theme("theme1").products(List.of("p1"))));
+        GetWorkspaceByUrlRequest byUrlRequest = new GetWorkspaceByUrlRequest();
+        byUrlRequest.setUrl("/w1Url");
+        Workspace workspace = new Workspace();
+        workspace.name("w1").theme("theme1");
 
         // create mock rest endpoint for workspace search
-        mockServerClient.when(request().withPath("/v1/workspaces/search").withMethod(HttpMethod.POST)
+        mockServerClient.when(request().withPath("/v1/workspaces/byUrl").withMethod(HttpMethod.POST)
                 .withContentType(MediaType.APPLICATION_JSON)
-                .withBody(JsonBody.json(criteria)))
+                .withBody(JsonBody.json(byUrlRequest)))
                 .withId("mockWS")
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(pageResult)));
+                        .withBody(JsonBody.json(workspace)));
 
         WorkspaceLoad loadResponse = new WorkspaceLoad();
         loadResponse.setName("w1");
@@ -95,7 +92,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                         .withBody(JsonBody.json(themeResponse)));
 
         var input = new GetWorkspaceConfigRequestDTO();
-        input.setBaseUrl("/w1Url");
+        input.setUrl("/w1Url");
 
         var output = given()
                 .when()
@@ -110,15 +107,15 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .extract().as(GetWorkspaceConfigResponseDTO.class);
 
         Assertions.assertNotNull(output);
-        Assertions.assertEquals(output.getWorkspace().getName(), "w1");
-        Assertions.assertEquals(output.getTheme().getName(), "theme1");
-        Assertions.assertEquals(output.getRoutes().size(), 1);
+        Assertions.assertEquals("w1", output.getWorkspace().getName());
+        Assertions.assertEquals("theme1", output.getTheme().getName());
+        Assertions.assertEquals(1, output.getRoutes().size());
 
         //CHECK FOR MOCKED REMOTE COMPONENTS
         //SHOULD BE REMOVED AFTER IMPLEMENTATION
-        Assertions.assertEquals(output.getRemoteComponents().get(0).getName(), "PortalMenu");
-        Assertions.assertEquals(output.getRemoteComponents().get(0).getAppId(), "appId");
-        Assertions.assertEquals(output.getShellRemoteComponents().get(0).getSlotName(), "menu");
+        Assertions.assertEquals("PortalMenu", output.getRemoteComponents().get(0).getName());
+        Assertions.assertEquals("appId", output.getRemoteComponents().get(0).getAppId());
+        Assertions.assertEquals("menu", output.getShellRemoteComponents().get(0).getSlotName());
 
         mockServerClient.clear("mockWS");
         mockServerClient.clear("mockPS");
@@ -147,24 +144,19 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
 
     @Test
     void getWorkspaceConfig_WorkspaceNotFoundTest() {
-        WorkspaceSearchCriteria criteria = new WorkspaceSearchCriteria();
-        criteria.setBaseUrl("/w1Url");
-        criteria.setPageNumber(0);
-        criteria.setPageSize(1);
-        WorkspacePageResult pageResult = new WorkspacePageResult();
-        pageResult.setStream(new ArrayList<>());
+        GetWorkspaceByUrlRequest byUrlRequest = new GetWorkspaceByUrlRequest();
+        byUrlRequest.setUrl("/w1Url");
 
         // create mock rest endpoint for workspace search
-        mockServerClient.when(request().withPath("/v1/workspaces/search").withMethod(HttpMethod.POST)
+        mockServerClient.when(request().withPath("/v1/workspaces/byUrl").withMethod(HttpMethod.POST)
                 .withContentType(MediaType.APPLICATION_JSON)
-                .withBody(JsonBody.json(criteria)))
+                .withBody(JsonBody.json(byUrlRequest)))
                 .withId("mockWS")
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(pageResult)));
+                        .withContentType(MediaType.APPLICATION_JSON));
 
         var input = new GetWorkspaceConfigRequestDTO();
-        input.setBaseUrl("/w1Url");
+        input.setUrl("/w1Url");
 
         var output = given()
                 .when()
@@ -181,20 +173,18 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
 
     @Test
     void getWorkspaceConfig_searchWorkspace_Bad_Request_Test() {
-        WorkspaceSearchCriteria criteria = new WorkspaceSearchCriteria();
-        criteria.setBaseUrl("/w1Url");
-        criteria.setPageNumber(0);
-        criteria.setPageSize(1);
+        GetWorkspaceByUrlRequest byUrlRequest = new GetWorkspaceByUrlRequest();
+        byUrlRequest.setUrl("/w1Url");
 
         // create mock rest endpoint for workspace search
-        mockServerClient.when(request().withPath("/v1/workspaces/search").withMethod(HttpMethod.POST)
+        mockServerClient.when(request().withPath("/v1/workspaces/byUrl").withMethod(HttpMethod.POST)
                 .withContentType(MediaType.APPLICATION_JSON)
-                .withBody(JsonBody.json(criteria)))
+                .withBody(JsonBody.json(byUrlRequest)))
                 .withId("mockWS")
                 .respond(httpRequest -> response().withStatusCode(BAD_REQUEST.getStatusCode()));
 
         var input = new GetWorkspaceConfigRequestDTO();
-        input.setBaseUrl("/w1Url");
+        input.setUrl("/w1Url");
 
         var output = given()
                 .when()
@@ -211,21 +201,19 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
 
     @Test
     void getWorkspaceConfig_ProductNotFoundTest() {
-        WorkspaceSearchCriteria criteria = new WorkspaceSearchCriteria();
-        criteria.setBaseUrl("/w1Url");
-        criteria.setPageNumber(0);
-        criteria.setPageSize(1);
-        WorkspacePageResult pageResult = new WorkspacePageResult();
-        pageResult.setStream(List.of(new WorkspaceAbstract().name("w1").theme("theme1").products(List.of("p1"))));
+        GetWorkspaceByUrlRequest byUrlRequest = new GetWorkspaceByUrlRequest();
+        byUrlRequest.setUrl("/w1Url");
+        Workspace workspace = new Workspace();
+        workspace.name("w1").theme("theme1");
 
         // create mock rest endpoint for workspace search
-        mockServerClient.when(request().withPath("/v1/workspaces/search").withMethod(HttpMethod.POST)
+        mockServerClient.when(request().withPath("/v1/workspaces/byUrl").withMethod(HttpMethod.POST)
                 .withContentType(MediaType.APPLICATION_JSON)
-                .withBody(JsonBody.json(criteria)))
+                .withBody(JsonBody.json(byUrlRequest)))
                 .withId("mockWS")
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(pageResult)));
+                        .withBody(JsonBody.json(workspace)));
 
         WorkspaceLoad loadResponse = new WorkspaceLoad();
         loadResponse.setName("w1");
@@ -256,7 +244,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                         .withBody(JsonBody.json(themeResponse)));
 
         var input = new GetWorkspaceConfigRequestDTO();
-        input.setBaseUrl("/w1Url");
+        input.setUrl("/w1Url");
 
         var output = given()
                 .when()
@@ -281,21 +269,19 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
 
     @Test
     void getWorkspaceConfig_searchTheme_throws_BAD_REQUEST_Test() {
-        WorkspaceSearchCriteria criteria = new WorkspaceSearchCriteria();
-        criteria.setBaseUrl("/w1Url");
-        criteria.setPageNumber(0);
-        criteria.setPageSize(1);
-        WorkspacePageResult pageResult = new WorkspacePageResult();
-        pageResult.setStream(List.of(new WorkspaceAbstract().name("w1").theme("theme1").products(List.of("p1"))));
+        GetWorkspaceByUrlRequest byUrlRequest = new GetWorkspaceByUrlRequest();
+        byUrlRequest.setUrl("/w1Url");
+        Workspace workspace = new Workspace();
+        workspace.name("w1").theme("theme1");
 
         // create mock rest endpoint for workspace search
-        mockServerClient.when(request().withPath("/v1/workspaces/search").withMethod(HttpMethod.POST)
+        mockServerClient.when(request().withPath("/v1/workspaces/byUrl").withMethod(HttpMethod.POST)
                 .withContentType(MediaType.APPLICATION_JSON)
-                .withBody(JsonBody.json(criteria)))
+                .withBody(JsonBody.json(byUrlRequest)))
                 .withId("mockWS")
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(pageResult)));
+                        .withBody(JsonBody.json(workspace)));
 
         WorkspaceLoad loadResponse = new WorkspaceLoad();
         loadResponse.setName("w1");
@@ -333,7 +319,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .respond(httpRequest -> response().withStatusCode(BAD_REQUEST.getStatusCode()));
 
         var input = new GetWorkspaceConfigRequestDTO();
-        input.setBaseUrl("/w1Url");
+        input.setUrl("/w1Url");
 
         var output = given()
                 .when()

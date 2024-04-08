@@ -15,7 +15,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.onecx.quarkus.permission.client.PermissionClientService;
-import org.tkit.onecx.shell.bff.rs.PermissionConfig;
+import org.tkit.onecx.shell.bff.rs.ShellConfig;
 import org.tkit.onecx.shell.bff.rs.mappers.ExceptionMapper;
 import org.tkit.onecx.shell.bff.rs.mappers.PermissionMapper;
 import org.tkit.quarkus.log.cdi.LogService;
@@ -38,7 +38,7 @@ public class PermissionRestController implements PermissionApiService {
     PermissionClientService permissionClientService;
 
     @Inject
-    PermissionConfig config;
+    ShellConfig config;
 
     @Inject
     PermissionMapper mapper;
@@ -54,7 +54,7 @@ public class PermissionRestController implements PermissionApiService {
         var principalToken = httpHeaders.getRequestHeader(AUTHORIZATION).get(0);
         var rawPermission = permissionClientService.getPermissions(getPermissionsRequestDTO.getProductName(),
                 getPermissionsRequestDTO.getAppId(),
-                principalToken, config.keySeparator(), config.cachingEnabled());
+                principalToken, config.permissions().keySeparator(), config.permissions().cachingEnabled());
 
         return Response.status(Response.Status.OK).entity(mapper.map(rawPermission)).build();
     }

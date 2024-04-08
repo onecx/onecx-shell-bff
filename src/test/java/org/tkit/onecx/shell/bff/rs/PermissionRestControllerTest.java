@@ -62,6 +62,7 @@ class PermissionRestControllerTest extends AbstractTest {
         // create mock rest endpoint for permission svc
         mockServerClient.when(request().withPath("/v1/permissions/user/product1/app1").withMethod(HttpMethod.POST)
                 .withContentType(MediaType.APPLICATION_JSON)
+                .withHeader(APM_HEADER_PARAM, ADMIN)
                 .withBody(JsonBody.json(permissionRequest)))
                 .withId("mockPermission2")
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
@@ -90,6 +91,87 @@ class PermissionRestControllerTest extends AbstractTest {
 
         mockServerClient.clear("mockPermission2");
         mockServerClient.clear("mockPermission");
+    }
+
+    @Test
+    void getPermissionsResponsesTest() {
+
+        String AUTHTOKEN = keycloakClient.getAccessToken(ADMIN);
+        PermissionRequest permissionRequest = new PermissionRequest();
+        permissionRequest.setToken("Bearer " + AUTHTOKEN);
+
+        // return empty list of permissions
+        mockServerClient.when(request().withPath("/v1/permissions/user/product1/app2").withMethod(HttpMethod.POST)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withHeader(APM_HEADER_PARAM, ADMIN))
+                .withId("test10")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(new ApplicationPermissions())));
+
+        var output2 = given()
+                .when()
+                .auth().oauth2(AUTHTOKEN)
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(new GetPermissionsRequestDTO().productName("product1").appId("app2"))
+                .post()
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(GetPermissionsResponseDTO.class);
+        Assertions.assertNotNull(output2);
+
+        // return empty action list of permissions
+        mockServerClient.when(request().withPath("/v1/permissions/user/product1/app3").withMethod(HttpMethod.POST)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withHeader(APM_HEADER_PARAM, ADMIN))
+                .withId("test11")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(new ApplicationPermissions().permissions(new HashMap<>()))));
+
+        var output3 = given()
+                .when()
+                .auth().oauth2(AUTHTOKEN)
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(new GetPermissionsRequestDTO().productName("product1").appId("app3"))
+                .post()
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(GetPermissionsResponseDTO.class);
+        Assertions.assertNotNull(output3);
+
+        // return empty action list of permissions
+        Map<String, Set<String>> actions = new HashMap<>();
+        actions.put("action1", null);
+        actions.put("action2", new HashSet<>());
+        mockServerClient.when(request().withPath("/v1/permissions/user/product1/app4").withMethod(HttpMethod.POST)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withHeader(APM_HEADER_PARAM, ADMIN))
+                .withId("test12")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(new ApplicationPermissions().permissions(actions))));
+
+        var output4 = given()
+                .when()
+                .auth().oauth2(AUTHTOKEN)
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(new GetPermissionsRequestDTO().productName("product1").appId("app4"))
+                .post()
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(GetPermissionsResponseDTO.class);
+        Assertions.assertNotNull(output4);
+
+        mockServerClient.clear("test10");
+        mockServerClient.clear("test11");
+        mockServerClient.clear("test12");
     }
 
     @Test

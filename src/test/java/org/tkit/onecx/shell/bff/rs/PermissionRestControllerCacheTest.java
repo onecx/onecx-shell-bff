@@ -39,7 +39,7 @@ import io.smallrye.config.SmallRyeConfig;
 
 @QuarkusTest
 @TestHTTPEndpoint(PermissionRestController.class)
-public class PermissionRestControllerCacheTest extends AbstractTest {
+class PermissionRestControllerCacheTest extends AbstractTest {
 
     @InjectMockServerClient
     MockServerClient mockServerClient;

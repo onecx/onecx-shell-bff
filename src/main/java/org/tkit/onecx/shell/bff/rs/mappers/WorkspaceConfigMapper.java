@@ -41,7 +41,7 @@ public interface WorkspaceConfigMapper {
         var selectedMfe = wsMfes.stream().filter(microfrontend -> microfrontend.getMfeId().equals(mfe.getAppId())).findFirst();
         selectedMfe.ifPresent(microfrontend -> route.setBaseUrl(microfrontend.getBasePath()));
         route.setUrl(mfe.getRemoteBaseUrl());
-        route.setPathMatch(PathMatchDTO.FULL); //temp fixed value
+        route.setPathMatch(PathMatchDTO.PREFIX);
         if (mfe.getRemoteName() != null) {
             route.setRemoteName(mfe.getRemoteName());
         }

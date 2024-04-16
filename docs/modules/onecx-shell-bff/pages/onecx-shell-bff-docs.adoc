@@ -1,0 +1,80 @@
+
+include::onecx-shell-bff-attributes.adoc[opts=optional]
+
+=== Default properties
+
+.{properties-file}
+[%collapsible%open]
+====
+[source,properties,subs=attributes+]
+----
+quarkus.http.auth.permission.health.paths=/q/*
+quarkus.http.auth.permission.health.policy=permit
+quarkus.http.auth.permission.default.paths=/*
+quarkus.http.auth.permission.default.policy=authenticated
+onecx.permissions.application-id=${quarkus.application.name}
+onecx.shell.permissions.cache-enabled=true
+onecx.shell.permissions.key-separator=#
+org.eclipse.microprofile.rest.client.propagateHeaders=apm-principal-token
+%prod.quarkus.rest-client.onecx_workspace_svc.url=http://onecx-workspace-svc:8080
+%prod.quarkus.rest-client.onecx_theme_svc.url=http://onecx-theme-svc:8080
+%prod.quarkus.rest-client.onecx_product_store_svc.url=http://onecx-product-store-svc:8080
+%prod.quarkus.rest-client.onecx_permission_svc.url=http://onecx-permission-svc:8080
+%prod.quarkus.rest-client.onecx_user_profile_svc.url=http://onecx-user-profile-svc:8080
+onecx.component.mock.keys[0]=portalmenu
+%prod.quarkus.oidc-client.client-id=${quarkus.application.name}
+quarkus.openapi-generator.codegen.input-base-dir=target/tmp/openapi
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_external_v1_yaml.config-key=onecx_workspace_svc
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_external_v1_yaml.base-package=gen.org.tkit.onecx.workspace.client
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_external_v1_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_external_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_external_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.config-key=onecx_theme_svc
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.base-package=gen.org.tkit.onecx.theme.client
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_v1_yaml.config-key=onecx_product_store_svc
+quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_v1_yaml.base-package=gen.org.tkit.onecx.product.store.client
+quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_v1_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_v1_yaml.model-name-suffix=PSV1
+quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_permission_svc_v1_yaml.config-key=onecx_permission_svc
+quarkus.openapi-generator.codegen.spec.onecx_permission_svc_v1_yaml.base-package=gen.org.tkit.onecx.permission.client
+quarkus.openapi-generator.codegen.spec.onecx_permission_svc_v1_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_permission_svc_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_permission_svc_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.config-key=onecx_user_profile_svc
+quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.base-package=gen.org.tkit.onecx.user.profile.client
+quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+----
+====
+
+=== Extensions
+
+include::onecx-shell-bff-extensions.adoc[opts=optional]
+
+=== Container
+
+{docker-registry}[Docker registry]
+
+
+=== Helm
+
+{helm-registry}[Helm registry]
+
+Default values
+
+.{helm-file}
+[source,yaml]
+----
+app:
+  name: bff
+  image:
+    repository: "onecx/onecx-shell-bff"
+
+----
+

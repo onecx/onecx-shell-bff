@@ -8,8 +8,10 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.RestResponse;
@@ -55,6 +57,9 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
     @Inject
     RemoteComponentMockConfig mockConfig;
 
+    @Context
+    UriInfo uriInfo;
+
     @Override
     public Response getWorkspaceConfig(GetWorkspaceConfigRequestDTO getWorkspaceConfigRequestDTO) {
         GetWorkspaceConfigResponseDTO responseDTO = new GetWorkspaceConfigResponseDTO();
@@ -76,7 +81,8 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
                         try (Response psResponse = productStoreClient.getProductByName(p.getProductName())) {
                             var product = psResponse.readEntity(ProductPSV1.class);
                             product.getMicrofrontends()
-                                    .forEach(mfe -> routes.add(mapper.mapRoute(mfe, product, p.getMicrofrontends())));
+                                    .forEach(mfe -> routes.add(mapper.mapRoute(mfe, product, p.getMicrofrontends(),
+                                            workspaceResponse.getBaseUrl())));
                         } catch (WebApplicationException ex) {
                             //skip
                         }
@@ -86,6 +92,12 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
                 //get theme info
                 try (Response themeResponse = themeClient.getThemeByName(workspaceResponse.getTheme())) {
                     var themeInfo = themeResponse.readEntity(Theme.class);
+                    if (themeInfo.getFaviconUrl() == null) {
+                        themeInfo.setFaviconUrl(uriInfo.getPath() + "/themes/" + themeInfo.getName() + "/favicon");
+                    }
+                    if (themeInfo.getLogoUrl() == null) {
+                        themeInfo.setLogoUrl(uriInfo.getPath() + "/themes/" + themeInfo.getName() + "/logo");
+                    }
                     responseDTO.setTheme(mapper.mapTheme(themeInfo));
                 }
                 //call remoteComponent Mocks => should be removed after implementation
@@ -103,6 +115,25 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
     public Response getThemeFaviconByName(String name) {
         Response.ResponseBuilder responseBuilder;
         try (Response response = themeClient.getThemeFaviconByName(name)) {
+            var contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
+            var contentLength = response.getHeaderString(HttpHeaders.CONTENT_LENGTH);
+            var body = response.readEntity(byte[].class);
+            if (contentType != null && body.length != 0) {
+                responseBuilder = Response.status(response.getStatus())
+                        .header(HttpHeaders.CONTENT_TYPE, contentType)
+                        .header(HttpHeaders.CONTENT_LENGTH, contentLength)
+                        .entity(body);
+            } else {
+                responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            }
+            return responseBuilder.build();
+        }
+    }
+
+    @Override
+    public Response getThemeLogoByName(String name) {
+        Response.ResponseBuilder responseBuilder;
+        try (Response response = themeClient.getThemeLogoByName(name)) {
             var contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
             var contentLength = response.getHeaderString(HttpHeaders.CONTENT_LENGTH);
             var body = response.readEntity(byte[].class);

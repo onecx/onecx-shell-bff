@@ -83,6 +83,92 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                         .withBody(JsonBody.json(productResponse)));
 
         Theme themeResponse = new Theme();
+        themeResponse.name("theme1").cssFile("cssfile").properties(new Object()).logoUrl("someLogoUrl")
+                .faviconUrl("someFavIconUrl");
+        // create mock rest endpoint for get theme by name from theme-svc
+        mockServerClient.when(request().withPath("/v1/themes/theme1").withMethod(HttpMethod.GET))
+                .withId("mockTheme")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(themeResponse)));
+
+        var input = new GetWorkspaceConfigRequestDTO();
+        input.setUrl("/w1Url");
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(input)
+                .post()
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(GetWorkspaceConfigResponseDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertEquals("w1", output.getWorkspace().getName());
+        Assertions.assertEquals("theme1", output.getTheme().getName());
+        Assertions.assertEquals(1, output.getRoutes().size());
+
+        //CHECK FOR MOCKED REMOTE COMPONENTS
+        //SHOULD BE REMOVED AFTER IMPLEMENTATION
+        Assertions.assertEquals("PortalMenu", output.getRemoteComponents().get(0).getName());
+        Assertions.assertEquals("appId", output.getRemoteComponents().get(0).getAppId());
+        Assertions.assertEquals("menu", output.getShellRemoteComponents().get(0).getSlotName());
+
+        mockServerClient.clear("mockWS");
+        mockServerClient.clear("mockPS");
+        mockServerClient.clear("mockTheme");
+        mockServerClient.clear("mockWSLoad");
+    }
+
+    @Test
+    void getWorkspaceConfigByBaseUrlTest_emptyImageUrl_should_create_urls_test() {
+        GetWorkspaceByUrlRequest byUrlRequest = new GetWorkspaceByUrlRequest();
+        byUrlRequest.setUrl("/w1Url");
+        Workspace workspace = new Workspace();
+        workspace.name("w1").theme("theme1");
+
+        // create mock rest endpoint for workspace search
+        mockServerClient.when(request().withPath("/v1/workspaces/byUrl").withMethod(HttpMethod.POST)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withBody(JsonBody.json(byUrlRequest)))
+                .withId("mockWS")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(workspace)));
+
+        WorkspaceLoad loadResponse = new WorkspaceLoad();
+        loadResponse.setName("w1");
+        Product product1 = new Product();
+        product1.baseUrl("/product1").productName("product1").microfrontends(List.of(
+                new Microfrontend().basePath("/app1").mfeId("app1")));
+        loadResponse.setProducts(List.of(product1));
+
+        // create mock rest endpoint for load workspace by name
+        mockServerClient.when(request().withPath("/v1/workspaces/w1/load").withMethod(HttpMethod.GET))
+                .withId("mockWSLoad")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(loadResponse)));
+
+        ProductPSV1 productResponse = new ProductPSV1();
+        productResponse.basePath("/product1").name("product1").microfrontends(List.of(
+                new MicrofrontendPSV1().exposedModule("App1Module")
+                        .appName("app1")
+                        .remoteBaseUrl("/remoteBaseUrl")
+                        .remoteEntry("/remoteEntry.js")
+                        .technology("ANGULAR")));
+        // create mock rest endpoint for get product by name from product-store
+        mockServerClient.when(request().withPath("/v1/products/product1").withMethod(HttpMethod.GET))
+                .withId("mockPS")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(productResponse)));
+
+        Theme themeResponse = new Theme();
         themeResponse.name("theme1").cssFile("cssfile").properties(new Object());
         // create mock rest endpoint for get theme by name from theme-svc
         mockServerClient.when(request().withPath("/v1/themes/theme1").withMethod(HttpMethod.GET))
@@ -110,6 +196,8 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
         Assertions.assertEquals("w1", output.getWorkspace().getName());
         Assertions.assertEquals("theme1", output.getTheme().getName());
         Assertions.assertEquals(1, output.getRoutes().size());
+        Assertions.assertNotNull(output.getTheme().getFaviconUrl());
+        Assertions.assertNotNull(output.getTheme().getLogoUrl());
 
         //CHECK FOR MOCKED REMOTE COMPONENTS
         //SHOULD BE REMOVED AFTER IMPLEMENTATION
@@ -372,12 +460,52 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
     }
 
     @Test
-    void getThemeFavicon_shouldReturnBadRequest_whenBodyEmpty() {
+    void getThemeLogoTest() {
+
+        byte[] bytesRes = new byte[] { (byte) 0xe0, 0x4f, (byte) 0xd0,
+                0x20, (byte) 0xea, 0x3a, 0x69, 0x10, (byte) 0xa2, (byte) 0xd8, 0x08, 0x00, 0x2b,
+                0x30, 0x30, (byte) 0x9d };
+
+        // create mock rest endpoint for get theme by name from theme-svc
+        mockServerClient.when(request().withPath("/v1/themes/theme1/logo").withMethod(HttpMethod.GET))
+                .withId("mockLogo")
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withHeaders(
+                                new Header(HttpHeaders.CONTENT_TYPE, "image/png"))
+                        .withBody(bytesRes));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", "theme1")
+                .get("/themes/{name}/logo")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .header(HttpHeaders.CONTENT_TYPE, "image/png")
+                .extract().body().asByteArray();
+
+        Assertions.assertNotNull(output);
+        mockServerClient.clear("mockLogo");
+
+    }
+
+    @Test
+    void getThemeFaviconAndLogo_shouldReturnBadRequest_whenBodyEmpty() {
 
         byte[] bytesRes = null;
 
         mockServerClient.when(request().withPath("/v1/themes/theme1/favicon").withMethod(HttpMethod.GET))
                 .withId("mockFavicon")
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withHeaders(
+                                new Header(HttpHeaders.CONTENT_TYPE, "image/png"))
+                        .withBody(bytesRes));
+
+        mockServerClient.when(request().withPath("/v1/themes/theme1/logo").withMethod(HttpMethod.GET))
+                .withId("mockLogo")
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
                         .withHeaders(
@@ -393,12 +521,23 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .get("/themes/{name}/favicon")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
-        mockServerClient.clear("mockFavicon");
 
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", "theme1")
+                .get("/themes/{name}/logo")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
+        mockServerClient.clear("mockFavicon");
+        mockServerClient.clear("mockLogo");
     }
 
     @Test
-    void getThemeFavicon_shouldReturnBadRequest_whenContentTypeEmpty() {
+    void getThemeFaviconAndLogo_shouldReturnBadRequest_whenContentTypeEmpty() {
 
         byte[] bytesRes = new byte[] { (byte) 0xe0, 0x4f, (byte) 0xd0,
                 0x20, (byte) 0xea, 0x3a, 0x69, 0x10, (byte) 0xa2, (byte) 0xd8, 0x08, 0x00, 0x2b,
@@ -406,6 +545,11 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
 
         mockServerClient.when(request().withPath("/v1/themes/theme1/favicon").withMethod(HttpMethod.GET))
                 .withId("mockFavicon")
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withBody(bytesRes));
+        mockServerClient.when(request().withPath("/v1/themes/theme1/logo").withMethod(HttpMethod.GET))
+                .withId("mockLogo")
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
                         .withBody(bytesRes));
@@ -420,7 +564,18 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
 
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", "theme1")
+                .get("/themes/{name}/logo")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
         mockServerClient.clear("mockFavicon");
+        mockServerClient.clear("mockLogo");
 
     }
 
@@ -429,6 +584,11 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
 
         mockServerClient.when(request().withPath("/v1/themes/theme1/favicon").withMethod(HttpMethod.GET))
                 .withId("mockFavicon")
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode()));
+
+        mockServerClient.when(request().withPath("/v1/themes/theme1/logo").withMethod(HttpMethod.GET))
+                .withId("mockLogo")
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(OK.getStatusCode()));
 
@@ -441,7 +601,18 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .get("/themes/{name}/favicon")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
-        mockServerClient.clear("mockFavicon");
 
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", "theme1")
+                .get("/themes/{name}/logo")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
+        mockServerClient.clear("mockFavicon");
+        mockServerClient.clear("mockLogo");
     }
 }

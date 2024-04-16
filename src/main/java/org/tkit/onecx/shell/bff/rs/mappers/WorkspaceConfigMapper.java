@@ -31,15 +31,16 @@ public interface WorkspaceConfigMapper {
     ProductItemSearchCriteriaPSV1 map(WorkspaceAbstract workspaceInfo);
 
     default RouteDTO mapRoute(MicrofrontendPSV1 mfe, ProductPSV1 product,
-            List<Microfrontend> wsMfes) {
+            List<Microfrontend> wsMfes, String workspaceUrl) {
         RouteDTO route = new RouteDTO();
         route.setRemoteEntryUrl(mfe.getRemoteEntry());
         route.setExposedModule(mfe.getExposedModule());
         route.setProductName(product.getName());
+        route.setDisplayName(product.getDisplayName());
         route.setAppId(mfe.getAppId());
         route.setTechnology(TechnologiesDTO.ANGULAR);
         var selectedMfe = wsMfes.stream().filter(microfrontend -> microfrontend.getMfeId().equals(mfe.getAppId())).findFirst();
-        selectedMfe.ifPresent(microfrontend -> route.setBaseUrl(microfrontend.getBasePath()));
+        selectedMfe.ifPresent(microfrontend -> route.setBaseUrl(workspaceUrl + microfrontend.getBasePath()));
         route.setUrl(mfe.getRemoteBaseUrl());
         route.setPathMatch(PathMatchDTO.PREFIX);
         if (mfe.getRemoteName() != null) {

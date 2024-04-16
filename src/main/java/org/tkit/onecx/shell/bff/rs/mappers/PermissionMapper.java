@@ -2,7 +2,7 @@ package org.tkit.onecx.shell.bff.rs.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.tkit.onecx.quarkus.permission.client.PermissionResponse;
+import org.tkit.onecx.quarkus.permission.service.PermissionResponse;
 
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.GetPermissionsResponseDTO;
 

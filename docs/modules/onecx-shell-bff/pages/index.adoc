@@ -1,0 +1,10 @@
+include::onecx-shell-bff-attributes.adoc[opts=optional]
+
+== onecx-shell-bff
+
+include::docs.adoc[opts=optional]
+
+=== Configuration
+include::onecx-shell-bff.adoc[opts=optional]
+
+include::onecx-shell-bff-docs.adoc[opts=optional]

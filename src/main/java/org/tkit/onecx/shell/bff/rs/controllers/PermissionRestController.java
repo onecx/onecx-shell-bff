@@ -17,7 +17,7 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
-import org.tkit.onecx.quarkus.permission.client.PermissionResponse;
+import org.tkit.onecx.quarkus.permission.service.PermissionResponse;
 import org.tkit.onecx.shell.bff.rs.ShellConfig;
 import org.tkit.onecx.shell.bff.rs.mappers.ExceptionMapper;
 import org.tkit.onecx.shell.bff.rs.mappers.PermissionMapper;

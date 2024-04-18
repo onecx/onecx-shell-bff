@@ -21,6 +21,7 @@ import org.mockserver.model.MediaType;
 import org.tkit.onecx.shell.bff.rs.controllers.WorkspaceConfigRestController;
 
 import gen.org.tkit.onecx.product.store.client.model.MicrofrontendPSV1;
+import gen.org.tkit.onecx.product.store.client.model.MicrofrontendTypePSV1;
 import gen.org.tkit.onecx.product.store.client.model.ProductPSV1;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.GetWorkspaceConfigRequestDTO;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.GetWorkspaceConfigResponseDTO;
@@ -74,7 +75,8 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                         .appName("app1")
                         .remoteBaseUrl("/remoteBaseUrl")
                         .remoteEntry("/remoteEntry.js")
-                        .technology("ANGULAR")));
+                        .technology("ANGULAR")
+                        .type(MicrofrontendTypePSV1.MODULE)));
         // create mock rest endpoint for get product by name from product-store
         mockServerClient.when(request().withPath("/v1/products/product1").withMethod(HttpMethod.GET))
                 .withId("mockPS")
@@ -160,7 +162,8 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                         .appName("app1")
                         .remoteBaseUrl("/remoteBaseUrl")
                         .remoteEntry("/remoteEntry.js")
-                        .technology("ANGULAR")));
+                        .technology("ANGULAR")
+                        .type(MicrofrontendTypePSV1.MODULE)));
         // create mock rest endpoint for get product by name from product-store
         mockServerClient.when(request().withPath("/v1/products/product1").withMethod(HttpMethod.GET))
                 .withId("mockPS")

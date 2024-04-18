@@ -22,6 +22,7 @@ import org.tkit.onecx.shell.bff.rs.mappers.WorkspaceConfigMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.org.tkit.onecx.product.store.client.api.ProductsApi;
+import gen.org.tkit.onecx.product.store.client.model.MicrofrontendTypePSV1;
 import gen.org.tkit.onecx.product.store.client.model.ProductPSV1;
 import gen.org.tkit.onecx.shell.bff.rs.internal.WorkspaceConfigApiService;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
@@ -77,31 +78,41 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
 
                     //get productStore information for each Product
                     List<RouteDTO> routes = new ArrayList<>();
+                    List<RemoteComponentDTO> components = new ArrayList<>();
+                    List<RemoteComponentMappingDTO> shellComponents = new ArrayList<>();
                     detailedWorkspaceInfo.getProducts().forEach(p -> {
                         try (Response psResponse = productStoreClient.getProductByName(p.getProductName())) {
                             var product = psResponse.readEntity(ProductPSV1.class);
                             product.getMicrofrontends()
-                                    .forEach(mfe -> routes.add(mapper.mapRoute(mfe, product, p.getMicrofrontends(),
-                                            workspaceResponse.getBaseUrl())));
+                                    .forEach(mfe -> {
+                                        if (mfe.getType() == MicrofrontendTypePSV1.MODULE) {
+                                            routes.add(mapper.mapRoute(mfe, product, p.getMicrofrontends(),
+                                                    workspaceResponse.getBaseUrl()));
+                                        }
+                                    });
                         } catch (WebApplicationException ex) {
                             //skip
                         }
                     });
                     responseDTO.setRoutes(routes);
+                    responseDTO.setRemoteComponents(components);
+                    responseDTO.setShellRemoteComponents(shellComponents);
+
                 }
                 //get theme info
                 try (Response themeResponse = themeClient.getThemeByName(workspaceResponse.getTheme())) {
                     var themeInfo = themeResponse.readEntity(Theme.class);
                     if (themeInfo.getFaviconUrl() == null) {
-                        themeInfo.setFaviconUrl(uriInfo.getPath() + "/themes/" + themeInfo.getName() + "/favicon");
+                        themeInfo.setFaviconUrl(uriInfo.getAbsolutePath() + "/themes/" + themeInfo.getName() + "/favicon");
                     }
                     if (themeInfo.getLogoUrl() == null) {
-                        themeInfo.setLogoUrl(uriInfo.getPath() + "/themes/" + themeInfo.getName() + "/logo");
+                        themeInfo.setLogoUrl(uriInfo.getAbsolutePath() + "/themes/" + themeInfo.getName() + "/logo");
                     }
                     responseDTO.setTheme(mapper.mapTheme(themeInfo));
                 }
                 //call remoteComponent Mocks => should be removed after implementation
                 responseDTO = mockRemoteComponents(responseDTO);
+
                 responseBuilder = Response.status(Response.Status.OK).entity(responseDTO);
             } else {
                 responseBuilder = Response.status(Response.Status.NOT_FOUND.getStatusCode(),

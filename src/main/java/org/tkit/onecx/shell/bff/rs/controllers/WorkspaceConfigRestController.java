@@ -103,10 +103,10 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
                 try (Response themeResponse = themeClient.getThemeByName(workspaceResponse.getTheme())) {
                     var themeInfo = themeResponse.readEntity(Theme.class);
                     if (themeInfo.getFaviconUrl() == null) {
-                        themeInfo.setFaviconUrl(uriInfo.getAbsolutePath() + "/themes/" + themeInfo.getName() + "/favicon");
+                        themeInfo.setFaviconUrl(uriInfo.getPath() + "/themes/" + themeInfo.getName() + "/favicon");
                     }
                     if (themeInfo.getLogoUrl() == null) {
-                        themeInfo.setLogoUrl(uriInfo.getAbsolutePath() + "/themes/" + themeInfo.getName() + "/logo");
+                        themeInfo.setLogoUrl(uriInfo.getPath() + "/themes/" + themeInfo.getName() + "/logo");
                     }
                     responseDTO.setTheme(mapper.mapTheme(themeInfo));
                 }

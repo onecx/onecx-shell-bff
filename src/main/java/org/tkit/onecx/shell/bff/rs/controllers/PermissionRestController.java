@@ -9,12 +9,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.onecx.quarkus.permission.service.PermissionResponse;
@@ -67,16 +67,6 @@ public class PermissionRestController implements PermissionApiService {
         return Response.status(Response.Status.OK).entity(mapper.map(rawPermission)).build();
     }
 
-    @ServerExceptionMapper
-    public RestResponse<ProblemDetailResponseDTO> constraint(ConstraintViolationException ex) {
-        return exceptionMapper.constraint(ex);
-    }
-
-    @ServerExceptionMapper
-    public Response restException(WebApplicationException ex) {
-        return Response.status(ex.getResponse().getStatus()).build();
-    }
-
     public PermissionResponse getPermissions(String productName, String appName, String token, String keySeparator) {
         if (!config.permissions().cachingEnabled()) {
             return getPermissionsLocal(productName, appName, token, keySeparator);
@@ -100,5 +90,15 @@ public class PermissionRestController implements PermissionApiService {
             }
             return PermissionResponse.create(result);
         }
+    }
+
+    @ServerExceptionMapper
+    public RestResponse<ProblemDetailResponseDTO> constraint(ConstraintViolationException ex) {
+        return exceptionMapper.constraint(ex);
+    }
+
+    @ServerExceptionMapper
+    public Response restException(ClientWebApplicationException ex) {
+        return exceptionMapper.clientException(ex);
     }
 }

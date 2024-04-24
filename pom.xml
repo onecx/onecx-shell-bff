@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest-client-reactive-jackson</artifactId>
+            <artifactId>quarkus-rest-client-jackson</artifactId>
         </dependency>
 
         <dependency>
@@ -84,7 +84,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-oidc-client-reactive-filter</artifactId>
+            <artifactId>quarkus-rest-client-oidc-filter</artifactId>
         </dependency>
         <!-- DEV -->
         <dependency>

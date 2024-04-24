@@ -23,15 +23,13 @@ import org.tkit.onecx.shell.bff.rs.mappers.WorkspaceConfigMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.org.tkit.onecx.product.store.client.api.ProductsApi;
-import gen.org.tkit.onecx.product.store.client.model.MicrofrontendTypePSV1;
-import gen.org.tkit.onecx.product.store.client.model.ProductPSV1;
+import gen.org.tkit.onecx.product.store.client.model.*;
 import gen.org.tkit.onecx.shell.bff.rs.internal.WorkspaceConfigApiService;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.theme.client.api.ThemesApi;
 import gen.org.tkit.onecx.theme.client.model.Theme;
 import gen.org.tkit.onecx.workspace.client.api.WorkspaceExternalApi;
-import gen.org.tkit.onecx.workspace.client.model.Workspace;
-import gen.org.tkit.onecx.workspace.client.model.WorkspaceLoad;
+import gen.org.tkit.onecx.workspace.client.model.*;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
@@ -120,6 +118,37 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
                         "No workspace with matching url found");
             }
             return responseBuilder.build();
+        }
+    }
+
+    @Override
+    public Response loadWorkspaceConfig(LoadWorkspaceConfigRequestDTO loadWorkspaceConfigRequestDTO) {
+        try (Response response = workspaceClient.loadWorkspaceByRequest(mapper.createRequest(loadWorkspaceConfigRequestDTO))) {
+            var wrapper = response.readEntity(WorkspaceWrapper.class);
+            if (wrapper == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            var result = mapper.createResponse(wrapper);
+
+            // load products and create corresponding module and components
+            if (wrapper.getProducts() != null) {
+                try (Response psResponse = productStoreClient.loadProductsByNames(mapper.create(wrapper))) {
+                    var productResponse = psResponse.readEntity(LoadProductResponsePSV1.class);
+                    mapper.createMfeAndComponents(result, wrapper, productResponse);
+                }
+            }
+
+            // create slots
+            result.setSlots(mapper.createSlots(wrapper.getSlots()));
+
+            //get theme info
+            try (Response themeResponse = themeClient.getThemeByName(wrapper.getTheme())) {
+                var theme = themeResponse.readEntity(Theme.class);
+                result.setTheme(mapper.createTheme(theme, uriInfo.getPath()));
+            }
+
+            return Response.ok(result).build();
         }
     }
 

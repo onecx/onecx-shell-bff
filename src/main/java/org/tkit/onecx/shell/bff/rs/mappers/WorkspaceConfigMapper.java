@@ -6,14 +6,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import gen.org.tkit.onecx.product.store.client.model.MicrofrontendPSV1;
-import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteriaPSV1;
 import gen.org.tkit.onecx.product.store.client.model.ProductPSV1;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.theme.client.model.Theme;
 import gen.org.tkit.onecx.workspace.client.model.GetWorkspaceByUrlRequest;
 import gen.org.tkit.onecx.workspace.client.model.Microfrontend;
 import gen.org.tkit.onecx.workspace.client.model.Workspace;
-import gen.org.tkit.onecx.workspace.client.model.WorkspaceAbstract;
 
 @Mapper
 public interface WorkspaceConfigMapper {
@@ -24,11 +22,6 @@ public interface WorkspaceConfigMapper {
 
     @Mapping(expression = "java( String.valueOf(themeInfo.getProperties()) )", target = "properties")
     ThemeDTO mapTheme(Theme themeInfo);
-
-    @Mapping(target = "productNames", source = "products")
-    @Mapping(target = "pageSize", ignore = true)
-    @Mapping(target = "pageNumber", ignore = true)
-    ProductItemSearchCriteriaPSV1 map(WorkspaceAbstract workspaceInfo);
 
     default RouteDTO mapRoute(MicrofrontendPSV1 mfe, ProductPSV1 product,
             List<Microfrontend> wsMfes, String workspaceUrl) {

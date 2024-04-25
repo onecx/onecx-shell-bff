@@ -20,12 +20,8 @@ import org.mockserver.model.JsonBody;
 import org.mockserver.model.MediaType;
 import org.tkit.onecx.shell.bff.rs.controllers.WorkspaceConfigRestController;
 
-import gen.org.tkit.onecx.product.store.client.model.MicrofrontendPSV1;
-import gen.org.tkit.onecx.product.store.client.model.MicrofrontendTypePSV1;
-import gen.org.tkit.onecx.product.store.client.model.ProductPSV1;
-import gen.org.tkit.onecx.shell.bff.rs.internal.model.GetWorkspaceConfigRequestDTO;
-import gen.org.tkit.onecx.shell.bff.rs.internal.model.GetWorkspaceConfigResponseDTO;
-import gen.org.tkit.onecx.shell.bff.rs.internal.model.ProblemDetailResponseDTO;
+import gen.org.tkit.onecx.product.store.client.model.*;
+import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.theme.client.model.Theme;
 import gen.org.tkit.onecx.workspace.client.model.*;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
@@ -617,5 +613,300 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
 
         mockServerClient.clear("mockFavicon");
         mockServerClient.clear("mockLogo");
+    }
+
+    @Test
+    void loadWorkspaceConfigByBaseUrlTest() {
+
+        var workspace = new WorkspaceWrapper();
+        workspace.name("w1").theme("theme1")
+                .addProductsItem(
+                        new Product().productName("product1").baseUrl("/product1")
+                                .addMicrofrontendsItem(new Microfrontend().basePath("/app1").mfeId("app1")))
+                .addSlotsItem(
+                        new WorkspaceWrapperSlot().name("slot1")
+                                .addComponentsItem(
+                                        new WorkspaceWrapperComponent().productName("product1").appId("app1")
+                                                .name("App1Component"))
+                                .addComponentsItem(
+                                        new WorkspaceWrapperComponent().productName("product1").appId("app1")
+                                                .name("App2Component"))
+                                .addComponentsItem(
+                                        new WorkspaceWrapperComponent().productName("product1").appId("app1")
+                                                .name("App3Component")));
+
+        // create mock rest endpoint for workspace search
+        mockServerClient.when(request().withPath("/v1/workspaces/load").withMethod(HttpMethod.POST)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withBody(JsonBody.json(new WorkspaceLoadRequest().path("/w1Url"))))
+                .withId("mockWS")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(workspace)));
+
+        var productResponse = new LoadProductResponsePSV1();
+        productResponse.addProductsItem(new LoadProductItemPSV1().name("product1")
+                .addMicrofrontendsItem(new LoadProductMicrofrontendPSV1()
+                        .exposedModule("App1Module")
+                        .appId("app1")
+                        .remoteBaseUrl("/remoteBaseUrl")
+                        .remoteEntry("/remoteEntry.js")
+                        .technology("ANGULAR")
+                        .type(MicrofrontendTypePSV1.MODULE))
+                .addMicrofrontendsItem(new LoadProductMicrofrontendPSV1()
+                        .exposedModule("App2Component")
+                        .appId("app1")
+                        .remoteBaseUrl("/remoteBaseUrl")
+                        .remoteEntry("/remoteEntry.js")
+                        .technology("ANGULAR")
+                        .type(MicrofrontendTypePSV1.COMPONENT)));
+
+        // create mock rest endpoint for get product by name from product-store
+        mockServerClient.when(request().withPath("/v1/products/load/shell").withMethod(HttpMethod.POST))
+                .withId("mockPS")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(productResponse)));
+
+        Theme themeResponse = new Theme();
+        themeResponse.name("theme1").cssFile("cssfile").properties(new Object()).logoUrl("someLogoUrl")
+                .faviconUrl("someFavIconUrl");
+        // create mock rest endpoint for get theme by name from theme-svc
+        mockServerClient.when(request().withPath("/v1/themes/theme1").withMethod(HttpMethod.GET))
+                .withId("mockTheme")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(themeResponse)));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
+                .post("load")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(LoadWorkspaceConfigResponseDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertEquals("w1", output.getWorkspace().getName());
+        Assertions.assertEquals("theme1", output.getTheme().getName());
+        Assertions.assertEquals(1, output.getRoutes().size());
+
+        Assertions.assertEquals("product1#app1#App2Component", output.getComponents().get(0).getName());
+        Assertions.assertEquals("app1", output.getComponents().get(0).getAppId());
+        Assertions.assertEquals("slot1", output.getSlots().get(0).getName());
+
+        mockServerClient.clear("mockWS");
+        mockServerClient.clear("mockPS");
+        mockServerClient.clear("mockTheme");
+        mockServerClient.clear("mockWSLoad");
+    }
+
+    @Test
+    void loadWorkspaceConfig_MissingBaseUrlTest() {
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(new LoadWorkspaceConfigRequestDTO())
+                .post("load")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ProblemDetailResponseDTO.class);
+
+        Assertions.assertNotNull(output);
+    }
+
+    @Test
+    void loadWorkspaceConfig_WorkspaceNotFoundTest() {
+
+        // create mock rest endpoint for workspace search
+        mockServerClient.when(request().withPath("/v1/workspaces/load").withMethod(HttpMethod.POST)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withBody(JsonBody.json(new WorkspaceLoadRequest().path("/w1Url"))))
+                .withId("mockWS")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
+                .post("load")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
+        Assertions.assertNotNull(output);
+        mockServerClient.clear("mockWS");
+    }
+
+    @Test
+    void loadWorkspaceConfigByEmptyProductsTest() {
+
+        var workspace = new WorkspaceWrapper();
+        workspace.name("w1").theme("theme1")
+                .addSlotsItem(
+                        new WorkspaceWrapperSlot().name("slot1")
+                                .addComponentsItem(
+                                        new WorkspaceWrapperComponent().productName("product1").appId("app1")
+                                                .name("App1Component")));
+
+        // create mock rest endpoint for workspace search
+        mockServerClient.when(request().withPath("/v1/workspaces/load").withMethod(HttpMethod.POST)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withBody(JsonBody.json(new WorkspaceLoadRequest().path("/w1Url"))))
+                .withId("mockWS")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(workspace)));
+
+        Theme themeResponse = new Theme();
+        themeResponse.name("theme1").cssFile("cssfile").properties(new Object()).logoUrl("someLogoUrl")
+                .faviconUrl("someFavIconUrl");
+        // create mock rest endpoint for get theme by name from theme-svc
+        mockServerClient.when(request().withPath("/v1/themes/theme1").withMethod(HttpMethod.GET))
+                .withId("mockTheme")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(themeResponse)));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
+                .post("load")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(LoadWorkspaceConfigResponseDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertEquals("w1", output.getWorkspace().getName());
+        Assertions.assertEquals("theme1", output.getTheme().getName());
+        Assertions.assertEquals(0, output.getRoutes().size());
+
+        mockServerClient.clear("mockWS");
+        mockServerClient.clear("mockTheme");
+    }
+
+    @Test
+    void loadWorkspaceConfig_ErrorTest() {
+
+        // create mock rest endpoint for workspace search
+        mockServerClient.when(request().withPath("/v1/workspaces/load").withMethod(HttpMethod.POST)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withBody(JsonBody.json(new WorkspaceLoadRequest().path("/w1Url"))))
+                .withId("mockWS")
+                .respond(httpRequest -> response().withStatusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
+                .post("load")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+        Assertions.assertNotNull(output);
+        mockServerClient.clear("mockWS");
+    }
+
+    @Test
+    void loadWorkspaceConfig_errorThemeTest() {
+
+        var workspace = new WorkspaceWrapper();
+        workspace.name("w1").theme("theme1")
+                .addSlotsItem(
+                        new WorkspaceWrapperSlot().name("slot1")
+                                .addComponentsItem(
+                                        new WorkspaceWrapperComponent().productName("product1").appId("app1")
+                                                .name("App1Component")));
+
+        // create mock rest endpoint for workspace search
+        mockServerClient.when(request().withPath("/v1/workspaces/load").withMethod(HttpMethod.POST)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withBody(JsonBody.json(new WorkspaceLoadRequest().path("/w1Url"))))
+                .withId("mockWS")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(workspace)));
+
+        // create mock rest endpoint for get theme by name from theme-svc
+        mockServerClient.when(request().withPath("/v1/themes/theme1").withMethod(HttpMethod.GET))
+                .withId("mockTheme")
+                .respond(httpRequest -> response().withStatusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
+                .post("load")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
+        mockServerClient.clear("mockWS");
+        mockServerClient.clear("mockTheme");
+    }
+
+    @Test
+    void loadWorkspace_errorProductTest() {
+
+        var workspace = new WorkspaceWrapper();
+        workspace.name("w1").theme("theme1")
+                .addProductsItem(
+                        new Product().productName("product1").baseUrl("/product1")
+                                .addMicrofrontendsItem(new Microfrontend().basePath("/app1").mfeId("app1")))
+                .addSlotsItem(
+                        new WorkspaceWrapperSlot().name("slot1")
+                                .addComponentsItem(
+                                        new WorkspaceWrapperComponent().productName("product1").appId("app1")
+                                                .name("App1Component"))
+                                .addComponentsItem(
+                                        new WorkspaceWrapperComponent().productName("product1").appId("app1")
+                                                .name("App2Component"))
+                                .addComponentsItem(
+                                        new WorkspaceWrapperComponent().productName("product1").appId("app1")
+                                                .name("App3Component")));
+
+        // create mock rest endpoint for workspace search
+        mockServerClient.when(request().withPath("/v1/workspaces/load").withMethod(HttpMethod.POST)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withBody(JsonBody.json(new WorkspaceLoadRequest().path("/w1Url"))))
+                .withId("mockWS")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(workspace)));
+
+        // create mock rest endpoint for get product by name from product-store
+        mockServerClient.when(request().withPath("/v1/products/load/shell").withMethod(HttpMethod.POST))
+                .withId("mockPS")
+                .respond(httpRequest -> response().withStatusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
+                .post("load")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
+        mockServerClient.clear("mockWS");
+        mockServerClient.clear("mockPS");
     }
 }

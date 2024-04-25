@@ -179,7 +179,7 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>https://raw.githubusercontent.com/onecx/onecx-workspace-svc/feat/add-slots/src/main/openapi/onecx-workspace-v1-openapi.yaml</url>
+                            <url>https://raw.githubusercontent.com/onecx/onecx-workspace-svc/main/src/main/openapi/onecx-workspace-v1-openapi.yaml</url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-workspace-svc-external-v1.yaml</outputFileName>
                             <skipCache>true</skipCache>
@@ -207,7 +207,7 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>https://raw.githubusercontent.com/onecx/onecx-product-store-svc/feat/add-slots/src/main/openapi/onecx-product-store-v1.yaml</url>
+                            <url>https://raw.githubusercontent.com/onecx/onecx-product-store-svc/main/src/main/openapi/onecx-product-store-v1.yaml</url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-product-store-svc-v1.yaml</outputFileName>
                             <skipCache>true</skipCache>

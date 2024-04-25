@@ -123,33 +123,36 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
 
     @Override
     public Response loadWorkspaceConfig(LoadWorkspaceConfigRequestDTO loadWorkspaceConfigRequestDTO) {
+
+        WorkspaceWrapper wrapper;
         try (Response response = workspaceClient.loadWorkspaceByRequest(mapper.createRequest(loadWorkspaceConfigRequestDTO))) {
-            var wrapper = response.readEntity(WorkspaceWrapper.class);
-            if (wrapper == null) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
-
-            var result = mapper.createResponse(wrapper);
-
-            // load products and create corresponding module and components
-            if (wrapper.getProducts() != null) {
-                try (Response psResponse = productStoreClient.loadProductsByNames(mapper.create(wrapper))) {
-                    var productResponse = psResponse.readEntity(LoadProductResponsePSV1.class);
-                    mapper.createMfeAndComponents(result, wrapper, productResponse);
-                }
-            }
-
-            // create slots
-            result.setSlots(mapper.createSlots(wrapper.getSlots()));
-
-            //get theme info
-            try (Response themeResponse = themeClient.getThemeByName(wrapper.getTheme())) {
-                var theme = themeResponse.readEntity(Theme.class);
-                result.setTheme(mapper.createTheme(theme, uriInfo.getPath()));
-            }
-
-            return Response.ok(result).build();
+            wrapper = response.readEntity(WorkspaceWrapper.class);
         }
+
+        if (wrapper == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        var result = mapper.createResponse(wrapper);
+
+        // load products and create corresponding module and components
+        if (wrapper.getProducts() != null) {
+            try (Response psResponse = productStoreClient.loadProductsByNames(mapper.create(wrapper))) {
+                var productResponse = psResponse.readEntity(LoadProductResponsePSV1.class);
+                mapper.createMfeAndComponents(result, wrapper, productResponse);
+            }
+        }
+
+        // create slots
+        result.setSlots(mapper.createSlots(wrapper.getSlots()));
+
+        //get theme info
+        try (Response themeResponse = themeClient.getThemeByName(wrapper.getTheme())) {
+            var theme = themeResponse.readEntity(Theme.class);
+            result.setTheme(mapper.createTheme(theme, uriInfo.getPath()));
+        }
+
+        return Response.ok(result).build();
     }
 
     @Override

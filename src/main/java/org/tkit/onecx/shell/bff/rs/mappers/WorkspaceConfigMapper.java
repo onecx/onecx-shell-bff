@@ -1,5 +1,7 @@
 package org.tkit.onecx.shell.bff.rs.mappers;
 
+import static gen.org.tkit.onecx.product.store.client.model.MicrofrontendTypePSV1.MODULE;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -108,9 +110,8 @@ public interface WorkspaceConfigMapper {
 
         SlotDTO result = new SlotDTO().name(slot.getName());
         if (slot.getComponents() != null) {
-            slot.getComponents().forEach(c -> {
-                result.addComponentsItem(componentName(c.getProductName(), c.getAppId(), c.getName()));
-            });
+            slot.getComponents()
+                    .forEach(c -> result.addComponentsItem(componentName(c.getProductName(), c.getAppId(), c.getName())));
         }
         return result;
     }
@@ -153,10 +154,10 @@ public interface WorkspaceConfigMapper {
 
             if (product.getMicrofrontends() != null) {
                 product.getMicrofrontends().forEach(mfe -> {
-                    switch (mfe.getType()) {
-                        case MODULE -> result
-                                .addRoutesItem(createRoute(product, mfe, pathMapping, wrapper));
-                        case COMPONENT -> result.addComponentsItem(createComponent(product, mfe));
+                    if (mfe.getType() == MODULE) {
+                        result.addRoutesItem(createRoute(product, mfe, pathMapping, wrapper));
+                    } else if (mfe.getType() == MicrofrontendTypePSV1.COMPONENT) {
+                        result.addComponentsItem(createComponent(product, mfe));
                     }
                 });
             }

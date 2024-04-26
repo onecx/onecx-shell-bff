@@ -19,8 +19,6 @@ import gen.org.tkit.onecx.workspace.client.model.*;
 @Mapper
 public interface WorkspaceConfigMapper {
 
-    GetWorkspaceByUrlRequest map(GetWorkspaceConfigRequestDTO getWorkspaceConfigRequestDTO);
-
     WorkspaceDTO map(Workspace workspaceInfo);
 
     @Mapping(expression = "java( String.valueOf(themeInfo.getProperties()) )", target = "properties")

@@ -74,12 +74,6 @@ h| Version
 | https://github.com/1000kit/tkit-quarkus/blob/2.22.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-rest-context.adoc[Link]
 | 2.22.0
 
-| tkit-quarkus-jpa
-
-| https://1000kit.github.io/tkit-quarkus/current/tkit-quarkus/tkit-quarkus-jpa.html[Link]
-| https://github.com/1000kit/tkit-quarkus/blob/2.22.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-jpa.adoc[Link]
-| 2.22.0
-
 | tkit-quarkus-security
 
 | https://1000kit.github.io/tkit-quarkus/current/tkit-quarkus/tkit-quarkus-security.html[Link]
@@ -119,6 +113,18 @@ h| Version
 | quarkus-container-image-docker
 
 | https://quarkus.io/guides/container-image[Link]
+| https://github.com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-container-image-docker.adoc[Link]
+| 3.9.3
+
+
+| quarkus-rest-client-oidc-filter
+
+| 
+| 
+| 3.9.3
+
+
+|===://quarkus.io/guides/container-image[Link]
 | https://github.com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-container-image-docker.adoc[Link]
 | 3.9.3
 

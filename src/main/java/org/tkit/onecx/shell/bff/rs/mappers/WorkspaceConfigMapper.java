@@ -125,10 +125,10 @@ public interface WorkspaceConfigMapper {
             target.setProperties(String.valueOf(themeInfo.getProperties()));
         }
         if (target.getFaviconUrl() == null) {
-            target.setFaviconUrl(path.replace("/load", "") + "/themes/" + target.getName() + "/favicon");
+            target.setFaviconUrl(path + "/themes/" + target.getName() + "/favicon");
         }
         if (target.getLogoUrl() == null) {
-            target.setLogoUrl(path.replace("/load", "") + "/themes/" + target.getName() + "/logo");
+            target.setLogoUrl(path + "/themes/" + target.getName() + "/logo");
         }
     }
 

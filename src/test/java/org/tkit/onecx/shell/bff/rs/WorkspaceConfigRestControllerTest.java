@@ -295,7 +295,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
-                .post("load")
+                .post()
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -326,7 +326,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(new LoadWorkspaceConfigRequestDTO())
-                .post("load")
+                .post()
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -352,7 +352,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
-                .post("load")
+                .post()
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(output);
@@ -395,7 +395,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
-                .post("load")
+                .post()
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -427,7 +427,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
-                .post("load")
+                .post()
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
         Assertions.assertNotNull(output);
@@ -466,7 +466,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
-                .post("load")
+                .post()
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
 
@@ -515,7 +515,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
-                .post("load")
+                .post()
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
 

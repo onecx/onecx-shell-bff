@@ -281,8 +281,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                         .withBody(JsonBody.json(productResponse)));
 
         Theme themeResponse = new Theme();
-        themeResponse.name("theme1").cssFile("cssfile").properties(new Object()).logoUrl("someLogoUrl")
-                .faviconUrl("someFavIconUrl");
+        themeResponse.name("theme1").cssFile("cssfile").properties(new Object()).faviconUrl("someUrl");
         // create mock rest endpoint for get theme by name from theme-svc
         mockServerClient.when(request().withPath("/v1/themes/theme1").withMethod(HttpMethod.GET))
                 .withId("mockTheme")
@@ -313,7 +312,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
         Assertions.assertEquals(productResponse.getProducts().get(0).getMicrofrontends().get(0).getEndpoints().size(),
                 output.getRoutes().get(0).getEndpoints().size());
         Assertions.assertEquals("endpoint1", output.getRoutes().get(0).getEndpoints().get(0).getName());
-
+        Assertions.assertEquals("/workspaceConfig/themes/theme1/logo", output.getTheme().getLogoUrl());
         mockServerClient.clear("mockWS");
         mockServerClient.clear("mockPS");
         mockServerClient.clear("mockTheme");

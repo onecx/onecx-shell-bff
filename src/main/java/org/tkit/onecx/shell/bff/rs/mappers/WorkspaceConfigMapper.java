@@ -78,6 +78,7 @@ public interface WorkspaceConfigMapper {
         return productName + "#" + appId + "#" + exposedModule;
     }
 
+    @Mapping(target = "removeEndpointsItem", ignore = true)
     @Mapping(target = "technology", constant = "ANGULAR")
     @Mapping(target = "url", source = "mfe.remoteBaseUrl")
     @Mapping(target = "pathMatch", constant = "PREFIX")
@@ -88,6 +89,7 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "appId", source = "mfe.appId")
     @Mapping(target = "exposedModule", source = "mfe.exposedModule")
     @Mapping(target = "remoteName", source = "mfe.remoteName")
+    @Mapping(target = "endpoints", source = "mfe.endpoints")
     RouteDTO createRoute(LoadProductItemPSV1 product, LoadProductMicrofrontendPSV1 mfe, Map<String, String> pathMapping,
             WorkspaceWrapper workspace);
 

@@ -203,7 +203,7 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>https://raw.githubusercontent.com/onecx/onecx-product-store-svc/main/src/main/openapi/onecx-product-store-v1.yaml</url>
+                            <url>https://raw.githubusercontent.com/JordenReuter/onecx-product-store-svc/feature/ui-endpoints-for-shell/src/main/openapi/onecx-product-store-v1.yaml</url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-product-store-svc-v1.yaml</outputFileName>
                             <skipCache>true</skipCache>

@@ -256,6 +256,17 @@ components:
           type: string
         displayName:
           type: string
+        endpoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/UIEndpoint'
+    UIEndpoint:
+      type: object
+      properties:
+        path:
+          type: string
+        name:
+          type: string
     Technologies:
       type: string
       enum: ['Angular', 'WebComponent']

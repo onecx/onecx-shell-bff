@@ -6,6 +6,8 @@ import static jakarta.ws.rs.core.Response.Status.*;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
+import java.util.List;
+
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
@@ -259,14 +261,17 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                         .remoteBaseUrl("/remoteBaseUrl")
                         .remoteEntry("/remoteEntry.js")
                         .technology("ANGULAR")
-                        .type(MicrofrontendTypePSV1.MODULE))
+                        .type(MicrofrontendTypePSV1.MODULE)
+                        .endpoints(List.of(new UIEndpointPSV1().name("endpoint1").path("/endpoint1"),
+                                new UIEndpointPSV1().name("endpoint2").path("/endpoint2"))))
                 .addMicrofrontendsItem(new LoadProductMicrofrontendPSV1()
                         .exposedModule("App2Component")
                         .appId("app1")
                         .remoteBaseUrl("/remoteBaseUrl")
                         .remoteEntry("/remoteEntry.js")
                         .technology("ANGULAR")
-                        .type(MicrofrontendTypePSV1.COMPONENT)));
+                        .type(MicrofrontendTypePSV1.COMPONENT)
+                        .endpoints(List.of(new UIEndpointPSV1().name("endpoint3").path("/endpoint3")))));
 
         // create mock rest endpoint for get product by name from product-store
         mockServerClient.when(request().withPath("/v1/products/load/shell").withMethod(HttpMethod.POST))
@@ -305,6 +310,9 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
         Assertions.assertEquals("product1#app1#App2Component", output.getComponents().get(0).getName());
         Assertions.assertEquals("app1", output.getComponents().get(0).getAppId());
         Assertions.assertEquals("slot1", output.getSlots().get(0).getName());
+        Assertions.assertEquals(productResponse.getProducts().get(0).getMicrofrontends().get(0).getEndpoints().size(),
+                output.getRoutes().get(0).getEndpoints().size());
+        Assertions.assertEquals("endpoint1", output.getRoutes().get(0).getEndpoints().get(0).getName());
 
         mockServerClient.clear("mockWS");
         mockServerClient.clear("mockPS");

@@ -22,7 +22,7 @@ org.eclipse.microprofile.rest.client.propagateHeaders=apm-principal-token
 %prod.quarkus.rest-client.onecx_permission_svc.url=http://onecx-permission-svc:8080
 %prod.quarkus.rest-client.onecx_user_profile_svc.url=http://onecx-user-profile-svc:8080
 quarkus.http.filter.images.header."Cache-Control"=max-age=432000
-quarkus.http.filter.images.matches=*/themes/*
+quarkus.http.filter.images.matches=/themes/*
 onecx.component.mock.keys[0]=portalmenu
 %prod.quarkus.oidc-client.client-id=${quarkus.application.name}
 quarkus.openapi-generator.codegen.input-base-dir=target/tmp/openapi
@@ -79,4 +79,5 @@ app:
     repository: "onecx/onecx-shell-bff"
 
 ----
+
 

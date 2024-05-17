@@ -296,6 +296,8 @@ components:
           type: string
         exposedModule:
           type: string
+        remoteName:
+          type: string
     GetUserProfileResponse:
       type: object
       required:

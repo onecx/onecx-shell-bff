@@ -4,6 +4,7 @@ import static gen.org.tkit.onecx.product.store.client.model.MicrofrontendTypePSV
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.mapstruct.AfterMapping;
@@ -110,6 +111,7 @@ public interface WorkspaceConfigMapper {
 
         SlotDTO result = new SlotDTO().name(slot.getName());
         if (slot.getComponents() != null) {
+            slot.getComponents().removeIf(Objects::isNull);
             slot.getComponents()
                     .forEach(c -> result.addComponentsItem(componentName(c.getProductName(), c.getAppId(), c.getName())));
         }

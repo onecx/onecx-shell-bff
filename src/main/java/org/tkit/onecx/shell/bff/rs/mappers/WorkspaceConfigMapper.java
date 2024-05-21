@@ -55,6 +55,7 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "name", ignore = true)
     @Mapping(target = "baseUrl", source = "mfe.remoteBaseUrl")
     @Mapping(target = "remoteEntryUrl", source = "mfe.remoteEntry")
+    @Mapping(target = "elementName", source = "mfe.tagName")
     @Mapping(target = "productName", source = "product.name")
     RemoteComponentDTO createComponent(LoadProductItemPSV1 product, LoadProductMicrofrontendPSV1 mfe);
 
@@ -91,6 +92,7 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "exposedModule", source = "mfe.exposedModule")
     @Mapping(target = "remoteName", source = "mfe.remoteName")
     @Mapping(target = "endpoints", source = "mfe.endpoints")
+    @Mapping(target = "elementName", source = "mfe.tagName")
     RouteDTO createRoute(LoadProductItemPSV1 product, LoadProductMicrofrontendPSV1 mfe, Map<String, String> pathMapping,
             WorkspaceWrapper workspace);
 

@@ -254,6 +254,8 @@ components:
           $ref: '#/components/schemas/PathMatch'
         remoteName:
           type: string
+        elementName:
+          type: string
         displayName:
           type: string
         endpoints:
@@ -269,7 +271,7 @@ components:
           type: string
     Technologies:
       type: string
-      enum: ['Angular', 'WebComponent']
+      enum: ['Angular', 'WebComponent', 'WebComponentScript', 'WebComponentModule' ]
     PathMatch:
       type: string
       enum: ['full', 'prefix']
@@ -297,6 +299,8 @@ components:
         exposedModule:
           type: string
         remoteName:
+          type: string
+        elementName:
           type: string
         technology:
           $ref: '#/components/schemas/Technologies'

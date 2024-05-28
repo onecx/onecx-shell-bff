@@ -4,6 +4,7 @@ import static gen.org.tkit.onecx.product.store.client.model.MicrofrontendTypePSV
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.mapstruct.AfterMapping;
@@ -54,6 +55,7 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "name", ignore = true)
     @Mapping(target = "baseUrl", source = "mfe.remoteBaseUrl")
     @Mapping(target = "remoteEntryUrl", source = "mfe.remoteEntry")
+    @Mapping(target = "elementName", source = "mfe.tagName")
     @Mapping(target = "productName", source = "product.name")
     RemoteComponentDTO createComponent(LoadProductItemPSV1 product, LoadProductMicrofrontendPSV1 mfe);
 
@@ -90,6 +92,7 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "exposedModule", source = "mfe.exposedModule")
     @Mapping(target = "remoteName", source = "mfe.remoteName")
     @Mapping(target = "endpoints", source = "mfe.endpoints")
+    @Mapping(target = "elementName", source = "mfe.tagName")
     RouteDTO createRoute(LoadProductItemPSV1 product, LoadProductMicrofrontendPSV1 mfe, Map<String, String> pathMapping,
             WorkspaceWrapper workspace, String productBaseUrl);
 
@@ -111,6 +114,7 @@ public interface WorkspaceConfigMapper {
 
         SlotDTO result = new SlotDTO().name(slot.getName());
         if (slot.getComponents() != null) {
+            slot.getComponents().removeIf(Objects::isNull);
             slot.getComponents()
                     .forEach(c -> result.addComponentsItem(componentName(c.getProductName(), c.getAppId(), c.getName())));
         }

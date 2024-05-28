@@ -234,6 +234,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                                 .addMicrofrontendsItem(new Microfrontend().basePath("/app1").mfeId("app1")))
                 .addSlotsItem(
                         new WorkspaceWrapperSlot().name("slot1")
+                                .addComponentsItem(null)
                                 .addComponentsItem(
                                         new WorkspaceWrapperComponent().productName("product1").appId("app1")
                                                 .name("App1Component"))

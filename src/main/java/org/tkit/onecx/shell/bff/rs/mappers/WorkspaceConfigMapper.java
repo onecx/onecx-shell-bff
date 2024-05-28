@@ -91,13 +91,14 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "remoteName", source = "mfe.remoteName")
     @Mapping(target = "endpoints", source = "mfe.endpoints")
     RouteDTO createRoute(LoadProductItemPSV1 product, LoadProductMicrofrontendPSV1 mfe, Map<String, String> pathMapping,
-            WorkspaceWrapper workspace);
+            WorkspaceWrapper workspace, String productBaseUrl);
 
     @AfterMapping
-    default void createRouteAfter(@MappingTarget RouteDTO target, Map<String, String> pathMapping, WorkspaceWrapper workspace) {
+    default void createRouteAfter(@MappingTarget RouteDTO target, Map<String, String> pathMapping, WorkspaceWrapper workspace,
+            String productBaseUrl) {
         var modulePath = pathMapping.get(target.getAppId());
         if (modulePath != null) {
-            target.setBaseUrl(workspace.getBaseUrl() + modulePath);
+            target.setBaseUrl(workspace.getBaseUrl() + productBaseUrl + modulePath);
         }
     }
 
@@ -155,7 +156,7 @@ public interface WorkspaceConfigMapper {
             if (product.getMicrofrontends() != null) {
                 product.getMicrofrontends().forEach(mfe -> {
                     if (mfe.getType() == MODULE) {
-                        result.addRoutesItem(createRoute(product, mfe, pathMapping, wrapper));
+                        result.addRoutesItem(createRoute(product, mfe, pathMapping, wrapper, workspaceProduct.getBaseUrl()));
                     } else if (mfe.getType() == MicrofrontendTypePSV1.COMPONENT) {
                         result.addComponentsItem(createComponent(product, mfe));
                     }

@@ -2,3 +2,7 @@ app:
   name: bff
   image:
     repository: "onecx/onecx-shell-bff"
+  operator:
+    keycloak:
+      client:
+        enabled: true

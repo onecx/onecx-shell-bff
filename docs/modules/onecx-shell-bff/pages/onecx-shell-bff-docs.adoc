@@ -24,7 +24,6 @@ org.eclipse.microprofile.rest.client.propagateHeaders=apm-principal-token
 quarkus.http.filter.images.header."Cache-Control"=max-age=432000
 quarkus.http.filter.images.matches=/themes/*
 onecx.component.mock.keys[0]=portalmenu
-%prod.quarkus.oidc-client.client-id=${quarkus.application.name}
 quarkus.openapi-generator.codegen.input-base-dir=target/tmp/openapi
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_external_v1_yaml.config-key=onecx_workspace_svc
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_external_v1_yaml.base-package=gen.org.tkit.onecx.workspace.client
@@ -52,6 +51,12 @@ quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.base-packa
 quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.return-response=true
 quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+%prod.quarkus.rest-client.onecx_workspace_svc_external_v1_yaml.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.rest-client.onecx_theme_svc_external_v1_yaml.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.rest-client.onecx_product_store_svc_v1_yaml.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.rest-client.onecx_permission_svc_v1_yaml.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.rest-client.onecx_user_profile_svc_v1_yaml.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.oidc-client.client-id=${quarkus.application.name}
 ----
 ====
 
@@ -77,7 +82,10 @@ app:
   name: bff
   image:
     repository: "onecx/onecx-shell-bff"
+  operator:
+    keycloak:
+      client:
+        enabled: true
 
 ----
-
 

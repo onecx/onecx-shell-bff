@@ -81,7 +81,7 @@ public interface WorkspaceConfigMapper {
     }
 
     @Mapping(target = "removeEndpointsItem", ignore = true)
-    @Mapping(target = "technology", constant = "ANGULAR")
+    @Mapping(target = "technology", source = "mfe.technology")
     @Mapping(target = "url", source = "mfe.remoteBaseUrl")
     @Mapping(target = "pathMatch", constant = "PREFIX")
     @Mapping(target = "baseUrl", ignore = true)

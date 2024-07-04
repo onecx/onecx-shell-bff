@@ -67,7 +67,9 @@ public class PermissionRestController implements PermissionApiService {
 
         return Response.status(Response.Status.OK).entity(mapper.map(rawPermission)).build();
     }
-    public PermissionResponse getPermissions(String productName, String appName, @LogExclude(mask = "****") String token, String keySeparator) {
+
+    public PermissionResponse getPermissions(String productName, String appName, @LogExclude(mask = "****") String token,
+            String keySeparator) {
         if (!config.permissions().cachingEnabled()) {
             return getPermissionsLocal(productName, appName, token, keySeparator);
         }
@@ -76,7 +78,8 @@ public class PermissionRestController implements PermissionApiService {
                 .indefinitely();
     }
 
-    public PermissionResponse getPermissionsLocal(String productName, String appName, @LogExclude(mask = "****") String token, String keySeparator) {
+    public PermissionResponse getPermissionsLocal(String productName, String appName, @LogExclude(mask = "****") String token,
+            String keySeparator) {
         try (Response response = permissionClient.getApplicationPermissions(productName, appName,
                 new PermissionRequest().token(token))) {
             var data = response.readEntity(ApplicationPermissions.class);

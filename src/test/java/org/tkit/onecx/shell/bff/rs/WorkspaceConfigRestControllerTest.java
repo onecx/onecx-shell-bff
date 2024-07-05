@@ -270,7 +270,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                         .appId("app1")
                         .remoteBaseUrl("/remoteBaseUrl")
                         .remoteEntry("/remoteEntry.js")
-                        .technology("ANGULAR")
+                        .technology("WEBCOMPONENTMODULE")
                         .type(MicrofrontendTypePSV1.COMPONENT)
                         .endpoints(List.of(new UIEndpointPSV1().name("endpoint3").path("/endpoint3")))));
 

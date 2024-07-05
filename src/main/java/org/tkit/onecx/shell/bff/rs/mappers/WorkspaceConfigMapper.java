@@ -96,6 +96,15 @@ public interface WorkspaceConfigMapper {
     RouteDTO createRoute(LoadProductItemPSV1 product, LoadProductMicrofrontendPSV1 mfe, Map<String, String> pathMapping,
             WorkspaceWrapper workspace, String productBaseUrl);
 
+    default TechnologiesDTO toEnum(String technologyString) {
+        for (TechnologiesDTO technology : TechnologiesDTO.values()) {
+            if (technology.toString().toUpperCase().equals(technologyString)) {
+                return technology;
+            }
+        }
+        return null;
+    }
+
     @AfterMapping
     default void createRouteAfter(@MappingTarget RouteDTO target, Map<String, String> pathMapping, WorkspaceWrapper workspace,
             String productBaseUrl) {

@@ -93,9 +93,9 @@ class PermissionRestControllerCacheTest extends AbstractTest {
         applicationPermissions.setAppId("onecx-shell-bff");
         applicationPermissions.setProductName("onecx-shell");
 
-        String AUTHTOKEN = keycloakClient.getAccessToken(ADMIN);
+        String token = keycloakClient.getAccessToken(ADMIN);
         PermissionRequest permissionRequest = new PermissionRequest();
-        permissionRequest.setToken("Bearer " + AUTHTOKEN);
+        permissionRequest.setToken("Bearer " + token);
         // create mock rest endpoint for permission svc
         mockServerClient
                 .when(request().withPath("/v1/permissions/user/applications/onecx-shell-bff").withMethod(HttpMethod.POST)
@@ -121,7 +121,7 @@ class PermissionRestControllerCacheTest extends AbstractTest {
         requestDTO.setProductName("product1");
         var output = given()
                 .when()
-                .auth().oauth2(AUTHTOKEN)
+                .auth().oauth2(token)
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)

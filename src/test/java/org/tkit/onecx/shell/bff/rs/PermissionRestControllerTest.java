@@ -46,9 +46,9 @@ class PermissionRestControllerTest extends AbstractTest {
         applicationPermissions.setAppId("onecx-shell-bff");
         applicationPermissions.setProductName("onecx-shell");
 
-        String AUTHTOKEN = keycloakClient.getAccessToken(ADMIN);
+        String token = keycloakClient.getAccessToken(ADMIN);
         PermissionRequest permissionRequest = new PermissionRequest();
-        permissionRequest.setToken("Bearer " + AUTHTOKEN);
+        permissionRequest.setToken("Bearer " + token);
         // create mock rest endpoint for permission svc
         mockServerClient
                 .when(request().withPath("/v1/permissions/user/applications/onecx-shell-bff").withMethod(HttpMethod.POST)
@@ -74,7 +74,7 @@ class PermissionRestControllerTest extends AbstractTest {
         requestDTO.setProductName("product1");
         var output = given()
                 .when()
-                .auth().oauth2(AUTHTOKEN)
+                .auth().oauth2(token)
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)
@@ -96,9 +96,9 @@ class PermissionRestControllerTest extends AbstractTest {
     @Test
     void getPermissionsResponsesTest() {
 
-        String AUTHTOKEN = keycloakClient.getAccessToken(ADMIN);
+        String token = keycloakClient.getAccessToken(ADMIN);
         PermissionRequest permissionRequest = new PermissionRequest();
-        permissionRequest.setToken("Bearer " + AUTHTOKEN);
+        permissionRequest.setToken("Bearer " + token);
 
         // return empty list of permissions
         mockServerClient.when(request().withPath("/v1/permissions/user/product1/app2").withMethod(HttpMethod.POST)
@@ -111,7 +111,7 @@ class PermissionRestControllerTest extends AbstractTest {
 
         var output2 = given()
                 .when()
-                .auth().oauth2(AUTHTOKEN)
+                .auth().oauth2(token)
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(new GetPermissionsRequestDTO().productName("product1").appId("app2"))
@@ -133,7 +133,7 @@ class PermissionRestControllerTest extends AbstractTest {
 
         var output3 = given()
                 .when()
-                .auth().oauth2(AUTHTOKEN)
+                .auth().oauth2(token)
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(new GetPermissionsRequestDTO().productName("product1").appId("app3"))
@@ -158,7 +158,7 @@ class PermissionRestControllerTest extends AbstractTest {
 
         var output4 = given()
                 .when()
-                .auth().oauth2(AUTHTOKEN)
+                .auth().oauth2(token)
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(new GetPermissionsRequestDTO().productName("product1").appId("app4"))
@@ -176,12 +176,12 @@ class PermissionRestControllerTest extends AbstractTest {
 
     @Test
     void getPermissions_missing_input_Test() {
-        String AUTHTOKEN = keycloakClient.getAccessToken(ADMIN);
+        String token = keycloakClient.getAccessToken(ADMIN);
 
         GetPermissionsRequestDTO requestDTO = new GetPermissionsRequestDTO();
         var output = given()
                 .when()
-                .auth().oauth2(AUTHTOKEN)
+                .auth().oauth2(token)
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)
@@ -206,9 +206,9 @@ class PermissionRestControllerTest extends AbstractTest {
         applicationPermissions.setAppId("onecx-shell-bff");
         applicationPermissions.setProductName("onecx-shell");
 
-        String AUTHTOKEN = keycloakClient.getAccessToken(ADMIN);
+        String token = keycloakClient.getAccessToken(ADMIN);
         PermissionRequest permissionRequest = new PermissionRequest();
-        permissionRequest.setToken("Bearer " + AUTHTOKEN);
+        permissionRequest.setToken("Bearer " + token);
         // create mock rest endpoint for permission svc
         mockServerClient
                 .when(request().withPath("/v1/permissions/user/applications/onecx-shell-bff").withMethod(HttpMethod.POST)
@@ -231,7 +231,7 @@ class PermissionRestControllerTest extends AbstractTest {
         requestDTO.setProductName("product1");
         var output = given()
                 .when()
-                .auth().oauth2(AUTHTOKEN)
+                .auth().oauth2(token)
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)

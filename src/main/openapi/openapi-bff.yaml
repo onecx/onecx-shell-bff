@@ -199,6 +199,8 @@ components:
         - name
         - baseUrl
       properties:
+        displayName:
+          type: string
         name:
           type: string
         baseUrl:
@@ -211,6 +213,8 @@ components:
       - properties
       type: object
       properties:
+        displayName:
+          type: string
         name:
           minLength: 2
           type: string

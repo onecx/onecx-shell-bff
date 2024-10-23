@@ -94,9 +94,5 @@ app:
         spec:
           kcConfig:
             defaultClientScopes: [ ocx-sl:all, ocx-ws:read, ocx-th:read, ocx-ps:read, ocx-pm:read, ocx-up:read, ocx-pm:read ]
-  operator:
-    # Permission
-    permission:
-      enabled: true
 ----
 

@@ -216,7 +216,7 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>https://raw.githubusercontent.com/onecx/onecx-permission-svc/main/src/main/openapi/onecx-permission-v1.yaml</url>
+                            <url>https://raw.githubusercontent.com/onecx/onecx-permission/main/openapi/onecx-permission-v1.yaml</url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-permission-svc-v1.yaml</outputFileName>
                             <skipCache>true</skipCache>

@@ -57,6 +57,7 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "remoteEntryUrl", source = "mfe.remoteEntry")
     @Mapping(target = "elementName", source = "mfe.tagName")
     @Mapping(target = "productName", source = "product.name")
+    @Mapping(target = "productVersion", source = "product.version")
     RemoteComponentDTO createComponent(LoadProductItemPSV1 product, LoadProductMicrofrontendPSV1 mfe);
 
     @AfterMapping

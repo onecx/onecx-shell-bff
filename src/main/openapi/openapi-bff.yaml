@@ -327,6 +327,8 @@ components:
           type: string
         productName:
           type: string
+        productVersion:
+          type: string
         exposedModule:
           type: string
         remoteName:

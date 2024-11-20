@@ -8,7 +8,7 @@ h|[.header-title]##Configuration property##
 h|Type
 h|Default
 
-a| [[onecx-shell-bff_onecx-shell-permissions-cache-enabled]] [.property-path]##`onecx.shell.permissions.cache-enabled`##
+a| [[onecx-shell-bff_onecx-shell-permissions-cache-enabled]] [.property-path]##link:#onecx-shell-bff_onecx-shell-permissions-cache-enabled[`onecx.shell.permissions.cache-enabled`]##
 
 [.description]
 --
@@ -25,7 +25,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`true`
 
-a| [[onecx-shell-bff_onecx-shell-permissions-key-separator]] [.property-path]##`onecx.shell.permissions.key-separator`##
+a| [[onecx-shell-bff_onecx-shell-permissions-key-separator]] [.property-path]##link:#onecx-shell-bff_onecx-shell-permissions-key-separator[`onecx.shell.permissions.key-separator`]##
 
 [.description]
 --

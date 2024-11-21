@@ -313,7 +313,8 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
         Assertions.assertEquals(productResponse.getProducts().get(0).getMicrofrontends().get(0).getEndpoints().size(),
                 output.getRoutes().get(0).getEndpoints().size());
         Assertions.assertEquals("endpoint1", output.getRoutes().get(0).getEndpoints().get(0).getName());
-        Assertions.assertEquals("/workspaceConfig/themes/theme1/logo", output.getTheme().getLogoUrl());
+        Assertions.assertNull(output.getTheme().getLogoUrl());
+        Assertions.assertNotNull(output.getTheme().getFaviconUrl());
         mockServerClient.clear("mockWS");
         mockServerClient.clear("mockPS");
         mockServerClient.clear("mockTheme");

@@ -4,10 +4,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriInfo;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
@@ -49,9 +47,6 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
     @Inject
     ExceptionMapper exceptionMapper;
 
-    @Context
-    UriInfo uriInfo;
-
     @Override
     public Response loadWorkspaceConfig(LoadWorkspaceConfigRequestDTO loadWorkspaceConfigRequestDTO) {
 
@@ -80,7 +75,7 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
         //get theme info
         try (Response themeResponse = themeClient.getThemeByName(wrapper.getTheme())) {
             var theme = themeResponse.readEntity(Theme.class);
-            result.setTheme(mapper.createTheme(theme, uriInfo.getPath()));
+            result.setTheme(mapper.createTheme(theme));
         }
 
         return Response.ok(result).build();

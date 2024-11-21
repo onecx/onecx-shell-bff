@@ -132,18 +132,12 @@ public interface WorkspaceConfigMapper {
     }
 
     @Mapping(target = "properties", ignore = true)
-    ThemeDTO createTheme(Theme themeInfo, String path);
+    ThemeDTO createTheme(Theme themeInfo);
 
     @AfterMapping
-    default void createThemeAfter(@MappingTarget ThemeDTO target, Theme themeInfo, String path) {
+    default void createThemeAfter(@MappingTarget ThemeDTO target, Theme themeInfo) {
         if (themeInfo != null) {
             target.setProperties(String.valueOf(themeInfo.getProperties()));
-        }
-        if (target.getFaviconUrl() == null) {
-            target.setFaviconUrl(path + "/themes/" + target.getName() + "/favicon");
-        }
-        if (target.getLogoUrl() == null) {
-            target.setLogoUrl(path + "/themes/" + target.getName() + "/logo");
         }
     }
 

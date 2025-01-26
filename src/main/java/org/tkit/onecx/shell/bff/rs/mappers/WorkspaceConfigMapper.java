@@ -87,7 +87,7 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "pathMatch", constant = "PREFIX")
     @Mapping(target = "baseUrl", ignore = true)
     @Mapping(target = "remoteEntryUrl", source = "mfe.remoteEntry")
-    @Mapping(target = "displayName", source = "product.displayName")
+    @Mapping(target = "displayName", source = "productDisplayName")
     @Mapping(target = "productName", source = "product.name")
     @Mapping(target = "appId", source = "mfe.appId")
     @Mapping(target = "exposedModule", source = "mfe.exposedModule")
@@ -95,7 +95,7 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "endpoints", source = "mfe.endpoints")
     @Mapping(target = "elementName", source = "mfe.tagName")
     RouteDTO createRoute(LoadProductItemPSV1 product, LoadProductMicrofrontendPSV1 mfe, Map<String, String> pathMapping,
-            WorkspaceWrapper workspace, String productBaseUrl);
+            WorkspaceWrapper workspace, String productBaseUrl, String productDisplayName);
 
     default TechnologiesDTO toEnum(String technologyString) {
         for (TechnologiesDTO technology : TechnologiesDTO.values()) {
@@ -164,7 +164,10 @@ public interface WorkspaceConfigMapper {
             if (product.getMicrofrontends() != null) {
                 product.getMicrofrontends().forEach(mfe -> {
                     if (mfe.getType() == MODULE) {
-                        result.addRoutesItem(createRoute(product, mfe, pathMapping, wrapper, workspaceProduct.getBaseUrl()));
+                        var productDisplayName = (workspaceProduct.getDisplayName() != null) ? workspaceProduct.getDisplayName()
+                                : product.getDisplayName();
+                        result.addRoutesItem(createRoute(product, mfe, pathMapping, wrapper, workspaceProduct.getBaseUrl(),
+                                productDisplayName));
                     } else if (mfe.getType() == MicrofrontendTypePSV1.COMPONENT) {
                         result.addComponentsItem(createComponent(product, mfe));
                     }

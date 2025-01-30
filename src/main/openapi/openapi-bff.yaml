@@ -63,7 +63,7 @@ paths:
         200:
           description: OK
           content:
-            image/*:
+            image/x-icon:
               schema:
                 minimum: 1
                 maximum: 110000

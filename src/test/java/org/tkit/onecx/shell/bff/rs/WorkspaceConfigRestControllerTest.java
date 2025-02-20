@@ -255,7 +255,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                         .withBody(JsonBody.json(workspace)));
 
         var productResponse = new LoadProductResponsePSV1();
-        productResponse.addProductsItem(new LoadProductItemPSV1().name("product1")
+        productResponse.addProductsItem(new LoadProductItemPSV1().name("product1").version("version1")
                 .addMicrofrontendsItem(new LoadProductMicrofrontendPSV1()
                         .exposedModule("App1Module")
                         .appId("app1")
@@ -312,6 +312,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
         Assertions.assertEquals("slot1", output.getSlots().get(0).getName());
         Assertions.assertEquals(productResponse.getProducts().get(0).getMicrofrontends().get(0).getEndpoints().size(),
                 output.getRoutes().get(0).getEndpoints().size());
+        Assertions.assertEquals("version1", output.getRoutes().get(0).getProductVersion());
         Assertions.assertEquals("endpoint1", output.getRoutes().get(0).getEndpoints().get(0).getName());
         Assertions.assertNull(output.getTheme().getLogoUrl());
         Assertions.assertNotNull(output.getTheme().getFaviconUrl());

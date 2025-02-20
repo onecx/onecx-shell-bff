@@ -94,6 +94,7 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "remoteName", source = "mfe.remoteName")
     @Mapping(target = "endpoints", source = "mfe.endpoints")
     @Mapping(target = "elementName", source = "mfe.tagName")
+    @Mapping(target = "productVersion", source = "product.version")
     RouteDTO createRoute(LoadProductItemPSV1 product, LoadProductMicrofrontendPSV1 mfe, Map<String, String> pathMapping,
             WorkspaceWrapper workspace, String productBaseUrl, String productDisplayName);
 

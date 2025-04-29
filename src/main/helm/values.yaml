@@ -14,12 +14,14 @@ app:
             read: permission on all GET requests and POST search
           permission:
             read: permission on all GET requests and POST search
+          parameter:
+            read: permission on all GET requests and POST search
     keycloak:
       client:
         enabled: true
         spec:
           kcConfig:
-            defaultClientScopes: [ ocx-sl:all, ocx-ws:read, ocx-th:read, ocx-ps:read, ocx-pm:read, ocx-up:read, ocx-pm:read ]
+            defaultClientScopes: [ ocx-sl:all, ocx-ws:read, ocx-th:read, ocx-ps:read, ocx-pm:read, ocx-up:read, ocx-pa-ext:read, ocx-pm:read ]
     microservice:
       spec:
         description: OneCX Shell Backend for Frontend

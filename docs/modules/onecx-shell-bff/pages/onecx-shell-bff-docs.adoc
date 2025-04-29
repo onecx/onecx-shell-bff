@@ -20,6 +20,7 @@ org.eclipse.microprofile.rest.client.propagateHeaders=apm-principal-token
 %prod.quarkus.rest-client.onecx_theme_svc.url=http://onecx-theme-svc:8080
 %prod.quarkus.rest-client.onecx_product_store_svc.url=http://onecx-product-store-svc:8080
 %prod.quarkus.rest-client.onecx_permission_svc.url=http://onecx-permission-svc:8080
+%prod.quarkus.rest-client.onecx_parameter_svc.url=http://onecx-parameter-svc:8080
 %prod.quarkus.rest-client.onecx_user_profile_svc.url=http://onecx-user-profile-svc:8080
 quarkus.http.filter.images.header."Cache-Control"=max-age=432000
 quarkus.http.filter.images.matches=/themes/*
@@ -56,10 +57,17 @@ quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.return-res
 quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
 quarkus.openapi-generator.codegen.spec.onecx_user_profile_svc_v1_yaml.enable-security-generation=false
+quarkus.openapi-generator.codegen.spec.onecx_parameter_svc_v1_yaml.config-key=onecx_parameter_svc
+quarkus.openapi-generator.codegen.spec.onecx_parameter_svc_v1_yaml.base-package=gen.org.tkit.onecx.parameter.client
+quarkus.openapi-generator.codegen.spec.onecx_parameter_svc_v1_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_parameter_svc_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_parameter_svc_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_parameter_svc_v1_yaml.enable-security-generation=false
 %prod.quarkus.rest-client.onecx_workspace_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_theme_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_product_store_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_permission_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.rest-client.onecx_parameter_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_user_profile_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.oidc-client.client-id=${quarkus.application.name}
 ----
@@ -99,12 +107,14 @@ app:
             read: permission on all GET requests and POST search
           permission:
             read: permission on all GET requests and POST search
+          parameter:
+            read: permission on all GET requests and POST search
     keycloak:
       client:
         enabled: true
         spec:
           kcConfig:
-            defaultClientScopes: [ ocx-sl:all, ocx-ws:read, ocx-th:read, ocx-ps:read, ocx-pm:read, ocx-up:read, ocx-pm:read ]
+            defaultClientScopes: [ ocx-sl:all, ocx-ws:read, ocx-th:read, ocx-ps:read, ocx-pm:read, ocx-up:read, ocx-pa-ext:read, ocx-pm:read ]
     microservice:
       spec:
         description: OneCX Shell Backend for Frontend

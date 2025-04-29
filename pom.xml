@@ -235,6 +235,19 @@
                             <skipCache>true</skipCache>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>parameter-svc-bff-v1</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://raw.githubusercontent.com/onecx/onecx-parameter-svc/refs/heads/main/src/main/openapi/openapi-bff-v1.yaml</url>
+                            <outputDirectory>target/tmp/openapi</outputDirectory>
+                            <outputFileName>onecx-parameter-svc-v1.yaml</outputFileName>
+                            <skipCache>true</skipCache>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

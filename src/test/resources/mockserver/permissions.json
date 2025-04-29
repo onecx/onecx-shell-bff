@@ -16,6 +16,7 @@
             "workspaceConfig": ["read", "write", "delete"],
             "userProfile": ["read", "write", "delete"],
             "permission": ["read"],
+            "parameter": ["read"],
             "permissions": ["admin-write","admin-read"]
           }
         },

@@ -133,6 +133,7 @@
                             <inputSpec>src/main/openapi/openapi-bff.yaml</inputSpec>
                             <apiPackage>gen.org.tkit.onecx.shell.bff.rs.internal</apiPackage>
                             <modelPackage>gen.org.tkit.onecx.shell.bff.rs.internal.model</modelPackage>
+                            <typeMappings>ParameterValue=Object</typeMappings>
                         </configuration>
                     </execution>
                 </executions>

@@ -199,6 +199,8 @@ components:
               type: string
     GetParametersResponse:
       type: object
+      required:
+        - products
       properties:
         products:
           type: object
@@ -210,6 +212,11 @@ components:
                 $ref: '#/components/schemas/Parameter'
     Parameter:
       type: object
+      required:
+        - name
+        - applicationId
+        - productName
+        - value
       properties:
         displayName:
           type: string
@@ -222,9 +229,16 @@ components:
         name:
           type: string
         value:
-          type: object
+          $ref: '#/components/schemas/ParameterValue'
         importValue:
-          type: object
+          $ref: '#/components/schemas/ParameterValue'
+    ParameterValue:
+      oneOf:
+        - type: string
+        - type: number
+        - type: boolean
+        - type: integer
+        - type: object
     LoadWorkspaceConfigRequest:
       type: object
       required:

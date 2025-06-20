@@ -488,6 +488,10 @@ components:
           $ref: '#/components/schemas/LayoutAndThemeSettings'
         localeAndTimeSettings:
           $ref: '#/components/schemas/LocaleAndTimeSettings'
+        settings:
+          type: object
+          additionalProperties:
+            type: string
     LayoutAndThemeSettings:
       type: object
       properties:

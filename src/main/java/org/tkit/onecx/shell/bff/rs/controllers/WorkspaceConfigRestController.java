@@ -101,9 +101,9 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
     }
 
     @Override
-    public Response getThemeLogoByName(String name) {
+    public Response getThemeLogoByName(String name, Boolean small) {
         Response.ResponseBuilder responseBuilder;
-        try (Response response = themeClient.getThemeLogoByName(name)) {
+        try (Response response = themeClient.getThemeLogoByName(name, small)) {
             var contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
             var contentLength = response.getHeaderString(HttpHeaders.CONTENT_LENGTH);
             var body = response.readEntity(byte[].class);

@@ -320,6 +320,10 @@ components:
           type: string
         homePage:
           type: string
+        logoUrl:
+          type: string
+        smallLogoUrl:
+          type: string
     Theme:
       required:
       - name

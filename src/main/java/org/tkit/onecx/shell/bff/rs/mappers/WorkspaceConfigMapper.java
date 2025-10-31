@@ -34,8 +34,12 @@ public interface WorkspaceConfigMapper {
         route.setDisplayName(product.getDisplayName());
         route.setAppId(mfe.getAppId());
         route.setTechnology(TechnologiesDTO.ANGULAR);
-        var selectedMfe = wsMfes.stream().filter(microfrontend -> microfrontend.getMfeId().equals(mfe.getAppId())).findFirst();
-        selectedMfe.ifPresent(microfrontend -> route.setBaseUrl(workspaceUrl + microfrontend.getBasePath()));
+        List<Microfrontend> matchingMfes = wsMfes.stream()
+                .filter(microfrontend -> microfrontend.getMfeId().equals(mfe.getAppId())).toList();
+        for (Microfrontend microfrontend : matchingMfes) {
+            route.setBaseUrl(workspaceUrl + microfrontend.getBasePath());
+        }
+
         route.setUrl(mfe.getRemoteBaseUrl());
         route.setPathMatch(PathMatchDTO.PREFIX);
         if (mfe.getRemoteName() != null) {

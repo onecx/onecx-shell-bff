@@ -271,6 +271,14 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                         .remoteBaseUrl("/remoteBaseUrl")
                         .remoteEntry("/remoteEntry.js")
                         .technology("WEBCOMPONENTMODULE")
+                        .type(MicrofrontendTypePSV1.MODULE)
+                        .endpoints(List.of(new UIEndpointPSV1().name("endpoint3").path("/endpoint2"))))
+                .addMicrofrontendsItem(new LoadProductMicrofrontendPSV1()
+                        .exposedModule("App3Component")
+                        .appId("app1")
+                        .remoteBaseUrl("/remoteBaseUrl")
+                        .remoteEntry("/remoteEntry.js")
+                        .technology("WEBCOMPONENTMODULE")
                         .type(MicrofrontendTypePSV1.COMPONENT)
                         .endpoints(List.of(new UIEndpointPSV1().name("endpoint3").path("/endpoint3")))));
 
@@ -305,9 +313,9 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output);
         Assertions.assertEquals("w1", output.getWorkspace().getName());
         Assertions.assertEquals("theme1", output.getTheme().getName());
-        Assertions.assertEquals(1, output.getRoutes().size());
+        Assertions.assertEquals(2, output.getRoutes().size());
 
-        Assertions.assertEquals("product1#app1#App2Component", output.getComponents().get(0).getName());
+        Assertions.assertEquals("product1#app1#App3Component", output.getComponents().get(0).getName());
         Assertions.assertEquals("app1", output.getComponents().get(0).getAppId());
         Assertions.assertEquals("slot1", output.getSlots().get(0).getName());
         Assertions.assertEquals(productResponse.getProducts().get(0).getMicrofrontends().get(0).getEndpoints().size(),
@@ -316,6 +324,10 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
         Assertions.assertEquals("endpoint1", output.getRoutes().get(0).getEndpoints().get(0).getName());
         Assertions.assertNull(output.getTheme().getLogoUrl());
         Assertions.assertNotNull(output.getTheme().getFaviconUrl());
+
+        Assertions.assertNotNull(output.getRoutes().get(0).getBaseUrl());
+        Assertions.assertNotNull(output.getRoutes().get(1).getBaseUrl());
+
         mockServerClient.clear("mockWS");
         mockServerClient.clear("mockPS");
         mockServerClient.clear("mockTheme");

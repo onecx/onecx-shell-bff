@@ -167,8 +167,12 @@ public interface WorkspaceConfigMapper {
                     if (mfe.getType() == MODULE) {
                         var productDisplayName = (workspaceProduct.getDisplayName() != null) ? workspaceProduct.getDisplayName()
                                 : product.getDisplayName();
-                        result.addRoutesItem(createRoute(product, mfe, pathMapping, wrapper, workspaceProduct.getBaseUrl(),
-                                productDisplayName));
+                        var route = createRoute(product, mfe, pathMapping, wrapper, workspaceProduct.getBaseUrl(),
+                                productDisplayName);
+                        if (route.getBaseUrl() != null) {
+                            result.addRoutesItem(createRoute(product, mfe, pathMapping, wrapper, workspaceProduct.getBaseUrl(),
+                                    productDisplayName));
+                        }
                     } else if (mfe.getType() == MicrofrontendTypePSV1.COMPONENT) {
                         result.addComponentsItem(createComponent(product, mfe));
                     }

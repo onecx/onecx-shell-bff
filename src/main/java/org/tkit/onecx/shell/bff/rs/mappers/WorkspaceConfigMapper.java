@@ -146,6 +146,7 @@ public interface WorkspaceConfigMapper {
         return new LoadProductRequestPSV1().productNames(wrapper.getProducts().stream().map(Product::getProductName).toList());
     }
 
+    @SuppressWarnings("java:S3776")
     default void createMfeAndComponents(LoadWorkspaceConfigResponseDTO result, WorkspaceWrapper wrapper,
             LoadProductResponsePSV1 loadProducts) {
         if (loadProducts == null || loadProducts.getProducts() == null) {
@@ -167,8 +168,12 @@ public interface WorkspaceConfigMapper {
                     if (mfe.getType() == MODULE) {
                         var productDisplayName = (workspaceProduct.getDisplayName() != null) ? workspaceProduct.getDisplayName()
                                 : product.getDisplayName();
-                        result.addRoutesItem(createRoute(product, mfe, pathMapping, wrapper, workspaceProduct.getBaseUrl(),
-                                productDisplayName));
+                        var route = createRoute(product, mfe, pathMapping, wrapper, workspaceProduct.getBaseUrl(),
+                                productDisplayName);
+                        if (route.getBaseUrl() != null) {
+                            result.addRoutesItem(createRoute(product, mfe, pathMapping, wrapper, workspaceProduct.getBaseUrl(),
+                                    productDisplayName));
+                        }
                     } else if (mfe.getType() == MicrofrontendTypePSV1.COMPONENT) {
                         result.addComponentsItem(createComponent(product, mfe));
                     }

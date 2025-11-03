@@ -145,7 +145,7 @@ public interface WorkspaceConfigMapper {
     default LoadProductRequestPSV1 create(WorkspaceWrapper wrapper) {
         return new LoadProductRequestPSV1().productNames(wrapper.getProducts().stream().map(Product::getProductName).toList());
     }
-
+    @SuppressWarnings("java:S3776")
     default void createMfeAndComponents(LoadWorkspaceConfigResponseDTO result, WorkspaceWrapper wrapper,
             LoadProductResponsePSV1 loadProducts) {
         if (loadProducts == null || loadProducts.getProducts() == null) {

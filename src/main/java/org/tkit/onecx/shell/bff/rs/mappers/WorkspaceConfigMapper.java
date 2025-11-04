@@ -112,11 +112,6 @@ public interface WorkspaceConfigMapper {
     default void createRouteAfter(@MappingTarget RouteDTO target, Map<String, List<Microfrontend>> pathMapping,
             WorkspaceWrapper workspace,
             String productBaseUrl) {
-        //        var modulePath = pathMapping.get(target.getAppId());
-        //        if (modulePath != null) {
-        //            target.setBaseUrl(workspace.getBaseUrl() + productBaseUrl + modulePath);
-        //        }
-
         var mfeList = pathMapping.get(target.getAppId());
         if (mfeList != null && !mfeList.isEmpty()) {
             Microfrontend selectedMfe = mfeList.stream()

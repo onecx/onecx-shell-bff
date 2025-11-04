@@ -95,7 +95,8 @@ public interface WorkspaceConfigMapper {
     @Mapping(target = "endpoints", source = "mfe.endpoints")
     @Mapping(target = "elementName", source = "mfe.tagName")
     @Mapping(target = "productVersion", source = "product.version")
-    RouteDTO createRoute(LoadProductItemPSV1 product, LoadProductMicrofrontendPSV1 mfe, Map<String, String> pathMapping,
+    RouteDTO createRoute(LoadProductItemPSV1 product, LoadProductMicrofrontendPSV1 mfe,
+            Map<String, List<Microfrontend>> pathMapping,
             WorkspaceWrapper workspace, String productBaseUrl, String productDisplayName);
 
     default TechnologiesDTO toEnum(String technologyString) {
@@ -108,12 +109,23 @@ public interface WorkspaceConfigMapper {
     }
 
     @AfterMapping
-    default void createRouteAfter(@MappingTarget RouteDTO target, Map<String, String> pathMapping, WorkspaceWrapper workspace,
+    default void createRouteAfter(@MappingTarget RouteDTO target, Map<String, List<Microfrontend>> pathMapping,
+            WorkspaceWrapper workspace,
             String productBaseUrl) {
-        var modulePath = pathMapping.get(target.getAppId());
-        if (modulePath != null) {
-            target.setBaseUrl(workspace.getBaseUrl() + productBaseUrl + modulePath);
+        //        var modulePath = pathMapping.get(target.getAppId());
+        //        if (modulePath != null) {
+        //            target.setBaseUrl(workspace.getBaseUrl() + productBaseUrl + modulePath);
+        //        }
+
+        var mfeList = pathMapping.get(target.getAppId());
+        if (mfeList != null && !mfeList.isEmpty()) {
+            Microfrontend selectedMfe = mfeList.stream()
+                    .filter(mfe -> Objects.equals(mfe.getExposedModule(), target.getExposedModule()))
+                    .findFirst()
+                    .orElse(mfeList.get(0)); // if exposedModule not set
+            target.setBaseUrl(workspace.getBaseUrl() + productBaseUrl + selectedMfe.getBasePath());
         }
+
     }
 
     List<SlotDTO> createSlots(List<WorkspaceWrapperSlot> slots);
@@ -159,9 +171,9 @@ public interface WorkspaceConfigMapper {
 
             var workspaceProduct = workspaceProducts.get(product.getName());
 
-            // create mapping APP_ID -> PATH
+            // create mapping APP_ID -> LIST OF PATHS
             var pathMapping = workspaceProduct.getMicrofrontends().stream()
-                    .collect(Collectors.toMap(Microfrontend::getMfeId, Microfrontend::getBasePath));
+                    .collect(Collectors.groupingBy(Microfrontend::getMfeId));
 
             if (product.getMicrofrontends() != null) {
                 product.getMicrofrontends().forEach(mfe -> {

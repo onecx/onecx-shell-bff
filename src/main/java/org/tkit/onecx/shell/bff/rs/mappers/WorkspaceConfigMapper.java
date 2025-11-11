@@ -120,7 +120,7 @@ public interface WorkspaceConfigMapper {
 
         Microfrontend selectedMfe = null;
         var exposedModule = target.getExposedModule();
-        boolean isExposedModuleEmpty = exposedModule == null || exposedModule.isBlank();
+        boolean isExposedModuleEmpty = exposedModule.isBlank();
 
         if (!isExposedModuleEmpty) {
             selectedMfe = mfeList.stream()

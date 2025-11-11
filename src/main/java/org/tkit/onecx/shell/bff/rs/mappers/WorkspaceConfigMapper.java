@@ -109,18 +109,38 @@ public interface WorkspaceConfigMapper {
     }
 
     @AfterMapping
-    default void createRouteAfter(@MappingTarget RouteDTO target, Map<String, List<Microfrontend>> pathMapping,
+    default void createRouteAfter(@MappingTarget RouteDTO target,
+            Map<String, List<Microfrontend>> pathMapping,
             WorkspaceWrapper workspace,
             String productBaseUrl) {
         var mfeList = pathMapping.get(target.getAppId());
-        if (mfeList != null && !mfeList.isEmpty()) {
-            Microfrontend selectedMfe = mfeList.stream()
-                    .filter(mfe -> Objects.equals(mfe.getExposedModule(), target.getExposedModule()))
-                    .findFirst()
-                    .orElse(mfeList.get(0)); // if exposedModule not set
-            target.setBaseUrl(workspace.getBaseUrl() + productBaseUrl + selectedMfe.getBasePath());
+        if (mfeList == null || mfeList.isEmpty()) {
+            return;
         }
 
+        Microfrontend selectedMfe = null;
+        var exposedModule = target.getExposedModule();
+        boolean isExposedModuleEmpty = exposedModule == null || exposedModule.isBlank();
+
+        if (!isExposedModuleEmpty) {
+            selectedMfe = mfeList.stream()
+                    .filter(mfe -> exposedModule.equals(mfe.getExposedModule()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (selectedMfe == null && mfeList.size() == 1
+                    && (mfeList.get(0).getExposedModule() == null || mfeList.get(0).getExposedModule().isBlank())) {
+                selectedMfe = mfeList.get(0);
+            }
+        } else {
+            if (mfeList.size() == 1) {
+                selectedMfe = mfeList.get(0);
+            }
+        }
+
+        if (selectedMfe != null && selectedMfe.getBasePath() != null) {
+            target.setBaseUrl(workspace.getBaseUrl() + productBaseUrl + selectedMfe.getBasePath());
+        }
     }
 
     List<SlotDTO> createSlots(List<WorkspaceWrapperSlot> slots);

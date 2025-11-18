@@ -15,6 +15,8 @@ quarkus.http.auth.permission.default.policy=authenticated
 onecx.permissions.application-id=${quarkus.application.name}
 onecx.shell.permissions.cache-enabled=true
 onecx.shell.permissions.key-separator=#
+quarkus.cache.caffeine.onecx-shell.metrics-enabled=${ONECX_SHELL_CACHE_SHELL_METRICS_ENABLED:true}
+quarkus.cache.caffeine.onecx-shell.expire-after-write=${ONECX_SHELL_CACHE_SHELL_EXPIRE_AFTER:310S}
 org.eclipse.microprofile.rest.client.propagateHeaders=apm-principal-token
 %prod.quarkus.rest-client.onecx_workspace_svc.url=http://onecx-workspace-svc:8080
 %prod.quarkus.rest-client.onecx_theme_svc.url=http://onecx-theme-svc:8080
@@ -122,4 +124,6 @@ app:
         description: OneCX Shell Backend for Frontend
         name: OneCX Shell BFF
 ----
+
+--
 

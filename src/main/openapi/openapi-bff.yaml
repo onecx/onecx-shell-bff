@@ -353,6 +353,13 @@ components:
           type: string
         properties:
           type: string
+        overwrites:
+          type: object
+          properties:
+            primeNg:
+              type: string
+            css:
+              type: string
     Route:
       type: object
       required:

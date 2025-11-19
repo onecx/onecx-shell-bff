@@ -353,7 +353,7 @@ components:
           type: string
         properties:
           type: string
-        overwrites:
+        overrides:
           type: object
           properties:
             primeNg:

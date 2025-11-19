@@ -22,7 +22,7 @@ public interface WorkspaceConfigMapper {
 
     WorkspaceDTO map(Workspace workspaceInfo);
 
-    @Mapping(target = "overwrites", ignore = true)
+    @Mapping(target = "overrides", ignore = true)
     @Mapping(expression = "java( String.valueOf(themeInfo.getProperties()) )", target = "properties")
     ThemeDTO mapTheme(Theme themeInfo);
 
@@ -160,7 +160,7 @@ public interface WorkspaceConfigMapper {
         return result;
     }
 
-    @Mapping(target = "overwrites", ignore = true)
+    @Mapping(target = "overrides", ignore = true)
     @Mapping(target = "properties", ignore = true)
     ThemeDTO createTheme(Theme themeInfo);
 

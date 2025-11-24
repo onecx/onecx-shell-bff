@@ -355,11 +355,6 @@ components:
           type: string
         overrides:
           type: object
-          properties:
-            primeNg:
-              type: string
-            css:
-              type: string
     Route:
       type: object
       required:

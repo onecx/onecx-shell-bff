@@ -22,10 +22,6 @@ public interface WorkspaceConfigMapper {
 
     WorkspaceDTO map(Workspace workspaceInfo);
 
-    @Mapping(target = "overrides", ignore = true)
-    @Mapping(expression = "java( String.valueOf(themeInfo.getProperties()) )", target = "properties")
-    ThemeDTO mapTheme(Theme themeInfo);
-
     default RouteDTO mapRoute(MicrofrontendPSV1 mfe, ProductPSV1 product,
             List<Microfrontend> wsMfes, String workspaceUrl) {
         RouteDTO route = new RouteDTO();
@@ -168,6 +164,7 @@ public interface WorkspaceConfigMapper {
     default void createThemeAfter(@MappingTarget ThemeDTO target, Theme themeInfo) {
         if (themeInfo != null) {
             target.setProperties(String.valueOf(themeInfo.getProperties()));
+            target.setOverrides(String.valueOf(themeInfo.getOverrides()));
         }
     }
 

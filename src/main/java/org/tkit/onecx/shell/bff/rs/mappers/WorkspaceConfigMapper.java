@@ -15,6 +15,7 @@ import org.mapstruct.MappingTarget;
 import gen.org.tkit.onecx.product.store.client.model.*;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.theme.client.model.Theme;
+import gen.org.tkit.onecx.theme.client.model.ThemeOverride;
 import gen.org.tkit.onecx.workspace.client.model.*;
 
 @Mapper
@@ -156,6 +157,7 @@ public interface WorkspaceConfigMapper {
         return result;
     }
 
+    @Mapping(target = "removeOverridesItem", ignore = true)
     @Mapping(target = "overrides", ignore = true)
     @Mapping(target = "properties", ignore = true)
     ThemeDTO createTheme(Theme themeInfo);
@@ -164,9 +166,11 @@ public interface WorkspaceConfigMapper {
     default void createThemeAfter(@MappingTarget ThemeDTO target, Theme themeInfo) {
         if (themeInfo != null) {
             target.setProperties(String.valueOf(themeInfo.getProperties()));
-            target.setOverrides(String.valueOf(themeInfo.getOverrides()));
+            target.setOverrides(mapThemeOverrides(themeInfo.getOverrides()));
         }
     }
+
+    List<ThemeOverrideDTO> mapThemeOverrides(List<ThemeOverride> overrides);
 
     default LoadProductRequestPSV1 create(WorkspaceWrapper wrapper) {
         return new LoadProductRequestPSV1().productNames(wrapper.getProducts().stream().map(Product::getProductName).toList());

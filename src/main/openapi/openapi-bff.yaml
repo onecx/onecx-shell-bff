@@ -354,7 +354,21 @@ components:
         properties:
           type: string
         overrides:
-          type: object
+          type: array
+          items:
+            $ref: '#/components/schemas/ThemeOverride'
+    ThemeOverride:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/OverrideType'
+        value:
+          type: string
+    OverrideType:
+      type: string
+      enum:
+        - PRIMENG
+        - CSS
     Route:
       type: object
       required:

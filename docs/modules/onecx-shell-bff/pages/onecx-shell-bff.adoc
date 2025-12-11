@@ -26,7 +26,7 @@ Environment variable: `+++ONECX_SHELL_PERMISSIONS_CACHE_ENABLED+++`
 endif::add-copy-button-to-env-var[]
 --
 |boolean
-|`true`
+|`+++true+++`
 
 a| [[onecx-shell-bff_onecx-shell-permissions-key-separator]] [.property-path]##link:#onecx-shell-bff_onecx-shell-permissions-key-separator[`onecx.shell.permissions.key-separator`]##
 ifdef::add-copy-button-to-config-props[]
@@ -47,7 +47,7 @@ Environment variable: `+++ONECX_SHELL_PERMISSIONS_KEY_SEPARATOR+++`
 endif::add-copy-button-to-env-var[]
 --
 |string
-|`#`
+|`+++#+++`
 
 |===
 

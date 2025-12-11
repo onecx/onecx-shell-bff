@@ -2,7 +2,6 @@ package org.tkit.onecx.shell.bff.rs;
 
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
-import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 

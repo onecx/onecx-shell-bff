@@ -55,11 +55,6 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
         try (Response response = workspaceClient.loadWorkspaceByRequest(mapper.createRequest(loadWorkspaceConfigRequestDTO))) {
             wrapper = response.readEntity(WorkspaceWrapper.class);
         }
-
-        if (wrapper == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
         var result = mapper.createResponse(wrapper);
 
         // load products and create corresponding module and components

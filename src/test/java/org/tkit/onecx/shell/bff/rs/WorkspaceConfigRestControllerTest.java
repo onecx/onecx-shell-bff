@@ -463,7 +463,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .withContentType(MediaType.APPLICATION_JSON)
                 .withBody(JsonBody.json(new WorkspaceLoadRequest().path("/w1Url"))))
                 .withId("mockWS")
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                .respond(httpRequest -> response().withStatusCode(NOT_FOUND.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
         var output = given()
@@ -477,6 +477,30 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                 .statusCode(NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(output);
         mockServerClient.clear("mockWS");
+    }
+
+    @Test
+    void loadWorkspaceConfig_WorkspaceNotFoundTest_Processing() {
+
+        // create mock rest endpoint for workspace search
+        mockServerClient.when(request().withPath("/v1/workspaces/load").withMethod(HttpMethod.POST)
+                .withContentType(MediaType.APPLICATION_JSON)
+                .withBody(JsonBody.json(new WorkspaceLoadRequest().path("/w1Url"))))
+                .withId("mockWS1")
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(new LoadWorkspaceConfigRequestDTO().path("/w1Url"))
+                .post()
+                .then()
+                .statusCode(INTERNAL_SERVER_ERROR.getStatusCode());
+        Assertions.assertNotNull(output);
+        mockServerClient.clear("mockWS1");
     }
 
     @Test

@@ -198,6 +198,21 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>theme-svc-icon-external-v1</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>
+                                https://raw.githubusercontent.com/onecx/onecx-theme-svc/main/src/main/openapi/onecx-icon-v1.yaml
+                            </url>
+                            <outputDirectory>target/tmp/openapi</outputDirectory>
+                            <outputFileName>onecx-theme-svc-icon-external-v1.yaml</outputFileName>
+                            <skipCache>true</skipCache>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>product-store-svc-external-v1</id>
                         <phase>generate-resources</phase>
                         <goals>

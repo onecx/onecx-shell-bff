@@ -20,6 +20,7 @@ import gen.org.tkit.onecx.product.store.client.model.*;
 import gen.org.tkit.onecx.shell.bff.rs.internal.WorkspaceConfigApiService;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.theme.client.api.ThemesApi;
+import gen.org.tkit.onecx.theme.client.model.AvailableImageTypes;
 import gen.org.tkit.onecx.theme.client.model.Theme;
 import gen.org.tkit.onecx.workspace.client.api.WorkspaceExternalApi;
 import gen.org.tkit.onecx.workspace.client.model.*;
@@ -82,9 +83,36 @@ public class WorkspaceConfigRestController implements WorkspaceConfigApiService 
     }
 
     @Override
+    public Response getAvailableImageTypes(String name) {
+        try (Response response = themeClient.getAvailableImageTypes(name)) {
+            var availableTypes = response.readEntity(AvailableImageTypes.class);
+            return Response.ok(mapper.mapImageTypes(availableTypes)).build();
+        }
+    }
+
+    @Override
     public Response getThemeFaviconByName(String name) {
         Response.ResponseBuilder responseBuilder;
         try (Response response = themeClient.getThemeFaviconByName(name)) {
+            var contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
+            var contentLength = response.getHeaderString(HttpHeaders.CONTENT_LENGTH);
+            var body = response.readEntity(byte[].class);
+            if (contentType != null && body.length != 0) {
+                responseBuilder = Response.status(response.getStatus())
+                        .header(HttpHeaders.CONTENT_TYPE, contentType)
+                        .header(HttpHeaders.CONTENT_LENGTH, contentLength)
+                        .entity(body);
+            } else {
+                responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            }
+            return responseBuilder.build();
+        }
+    }
+
+    @Override
+    public Response getThemeImageByNameAndRefType(String name, String refType) {
+        Response.ResponseBuilder responseBuilder;
+        try (Response response = themeClient.getThemeImageByNameAndRefType(name, refType)) {
             var contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
             var contentLength = response.getHeaderString(HttpHeaders.CONTENT_LENGTH);
             var body = response.readEntity(byte[].class);

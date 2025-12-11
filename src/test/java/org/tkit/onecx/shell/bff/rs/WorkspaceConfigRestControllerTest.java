@@ -22,6 +22,7 @@ import org.tkit.onecx.shell.bff.rs.controllers.WorkspaceConfigRestController;
 
 import gen.org.tkit.onecx.product.store.client.model.*;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.theme.client.model.AvailableImageTypes;
 import gen.org.tkit.onecx.theme.client.model.Theme;
 import gen.org.tkit.onecx.workspace.client.model.*;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
@@ -96,6 +97,122 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
 
         Assertions.assertNotNull(output);
         mockServerClient.clear("mockLogo");
+
+    }
+
+    @Test
+    void getThemeImageByRefIdAndRefType_Test() {
+
+        byte[] bytesRes = new byte[] { (byte) 0xe0, 0x4f, (byte) 0xd0,
+                0x20, (byte) 0xea, 0x3a, 0x69, 0x10, (byte) 0xa2, (byte) 0xd8, 0x08, 0x00, 0x2b,
+                0x30, 0x30, (byte) 0x9d };
+
+        mockServerClient.when(request().withPath("/v1/themes/theme1/images/anyType").withMethod(HttpMethod.GET))
+                .withId("mockLogo")
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withHeaders(
+                                new Header(HttpHeaders.CONTENT_TYPE, "image/png"))
+                        .withBody(bytesRes));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", "theme1")
+                .pathParam("refType", "anyType")
+                .get("/themes/{name}/images/{refType}")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .header(HttpHeaders.CONTENT_TYPE, "image/png")
+                .extract().body().asByteArray();
+
+        Assertions.assertNotNull(output);
+        mockServerClient.clear("mockLogo");
+
+    }
+
+    @Test
+    void getAvailableImageTypesOfTheme_test() {
+
+        AvailableImageTypes types = new AvailableImageTypes();
+        types.setTypes(List.of("someType", "favicon"));
+
+        mockServerClient.when(request().withPath("/v1/themes/theme1/images/availableTypes").withMethod(HttpMethod.GET))
+                .withId("mockLogo")
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(types)));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", "theme1")
+                .get("/themes/{name}/images/availableTypes")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(AvailableImageTypesDTO.class);
+
+        Assertions.assertEquals(types.getTypes().size(), output.getTypes().size());
+        mockServerClient.clear("mockLogo");
+
+    }
+
+    @Test
+    void getThemeImage_shouldReturnBadRequest_whenBodyEmpty() {
+
+        byte[] bytesRes = null;
+
+        mockServerClient.when(request().withPath("/v1/themes/theme1/images/anyType").withMethod(HttpMethod.GET))
+                .withId("mockFavicon")
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withHeaders(
+                                new Header(HttpHeaders.CONTENT_TYPE, "image/png"))
+                        .withBody(bytesRes));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", "theme1")
+                .pathParam("refId", "anyType")
+                .get("/themes/{name}/images/{refId}")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
+        mockServerClient.clear("mockFavicon");
+    }
+
+    @Test
+    void getThemeImage_shouldReturnBadRequest_whenContentTypeEmpty() {
+
+        byte[] bytesRes = new byte[] { (byte) 0xe0, 0x4f, (byte) 0xd0,
+                0x20, (byte) 0xea, 0x3a, 0x69, 0x10, (byte) 0xa2, (byte) 0xd8, 0x08, 0x00, 0x2b,
+                0x30, 0x30, (byte) 0x9d };
+
+        mockServerClient.when(request().withPath("/v1/themes/theme1/images/anyType").withMethod(HttpMethod.GET))
+                .withId("mockFavicon")
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withBody(bytesRes));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("refId", "anyType")
+                .pathParam("name", "theme1")
+                .get("/themes/{name}/images/{refId}")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
+        mockServerClient.clear("mockFavicon");
 
     }
 

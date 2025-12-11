@@ -26,7 +26,6 @@ org.eclipse.microprofile.rest.client.propagateHeaders=apm-principal-token
 %prod.quarkus.rest-client.onecx_user_profile_svc.url=http://onecx-user-profile-svc:8080
 quarkus.http.filter.images.header."Cache-Control"=max-age=432000
 quarkus.http.filter.images.matches=/themes/*
-onecx.component.mock.keys[0]=portalmenu
 quarkus.openapi-generator.codegen.input-base-dir=target/tmp/openapi
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_external_v1_yaml.config-key=onecx_workspace_svc
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_external_v1_yaml.base-package=gen.org.tkit.onecx.workspace.client
@@ -40,6 +39,12 @@ quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.return-r
 quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
 quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.enable-security-generation=false
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_icon_external_v1_yaml.config-key=onecx_theme_svc
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_icon_external_v1_yaml.base-package=gen.org.tkit.onecx.icon.client
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_icon_external_v1_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_icon_external_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_icon_external_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_icon_external_v1_yaml.enable-security-generation=false
 quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_v1_yaml.config-key=onecx_product_store_svc
 quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_v1_yaml.base-package=gen.org.tkit.onecx.product.store.client
 quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_v1_yaml.return-response=true
@@ -125,8 +130,4 @@ app:
         name: OneCX Shell BFF
 ----
 
-l BFF
-----
-
---
 

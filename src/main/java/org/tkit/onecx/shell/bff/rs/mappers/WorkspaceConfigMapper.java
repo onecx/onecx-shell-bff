@@ -14,6 +14,7 @@ import org.mapstruct.MappingTarget;
 
 import gen.org.tkit.onecx.product.store.client.model.*;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.theme.client.model.AvailableImageTypes;
 import gen.org.tkit.onecx.theme.client.model.Theme;
 import gen.org.tkit.onecx.theme.client.model.ThemeOverride;
 import gen.org.tkit.onecx.workspace.client.model.*;
@@ -213,4 +214,6 @@ public interface WorkspaceConfigMapper {
         });
     }
 
+    @Mapping(target = "removeTypesItem", ignore = true)
+    AvailableImageTypesDTO mapImageTypes(AvailableImageTypes availableTypes);
 }

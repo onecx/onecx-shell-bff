@@ -110,6 +110,97 @@ paths:
                 format: binary
         404:
           description: Logo not found
+  /workspaceConfig/themes/{name}/images/{refType}:
+    get:
+      x-onecx:
+        permissions:
+          workspaceConfig:
+            - read
+      tags:
+        - workspaceConfig
+      description: Get an image of a theme by its reference name (theme name) and reference type
+      operationId: getThemeImageByNameAndRefType
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: refType
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Image retrieved successfully
+          content:
+            image/*:
+              schema:
+                minimum: 1
+                maximum: 110000
+                type: string
+                format: binary
+        404:
+          description: Image not found
+  /workspaceConfig/themes/{name}/images/availableTypes:
+    get:
+      x-onecx:
+        permissions:
+          workspaceConfig:
+            - read
+      tags:
+        - workspaceConfig
+      description: Get available image types
+      operationId: getAvailableImageTypes
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Available image types retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailableImageTypes'
+  /icons/{refId}:
+    post:
+      x-onecx:
+        permissions:
+          workspaceConfig:
+            - read
+      tags:
+        - icon
+      description: Retrieve icons by list of names and refId
+      parameters:
+        - name: refId
+          in: path
+          required: true
+          schema:
+            type: string
+      operationId: findIconsByNamesAndRefId
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IconCriteria'
+      responses:
+        "200":
+          description: Icons retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IconListResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /parameters:
     post:
       x-onecx:
@@ -164,7 +255,6 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         '404':
           description: User profile not found
-
   /permissions:
     post:
       x-onecx:
@@ -198,6 +288,45 @@ paths:
           description: Permissions not found
 components:
   schemas:
+    IconCriteria:
+      type: object
+      required:
+        - names
+      properties:
+        names:
+          minItems: 1
+          type: array
+          items:
+            type: string
+    IconListResponse:
+      type: object
+      properties:
+        icons:
+          type: array
+          items:
+            $ref: '#/components/schemas/Icon'
+    Icon:
+      type: object
+      required:
+        - name
+        - body
+        - type
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        body:
+          type: string
+        parent:
+          type: string
+    AvailableImageTypes:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            type: string
     GetParametersRequest:
       type: object
       required:

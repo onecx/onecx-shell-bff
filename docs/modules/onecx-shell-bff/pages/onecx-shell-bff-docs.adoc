@@ -76,7 +76,7 @@ quarkus.openapi-generator.codegen.spec.onecx_parameter_svc_v1_yaml.enable-securi
 %prod.quarkus.rest-client.onecx_permission_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_parameter_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_user_profile_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
-%prod.quarkus.oidc-client.client-id=${ONECX_OIDC_CLIENT_CLIENT_ID:${quarkus.application.name}}
+%prod.quarkus.oidc-client.client-id=${quarkus.application.name}
 ----
 ====
 
@@ -100,8 +100,6 @@ Default values
 ----
 app:
   name: bff
-  template:
-    oidc_client_id: "ONECX_OIDC_CLIENT_CLIENT_ID"
   image:
     repository: "onecx/onecx-shell-bff"
   operator:
@@ -129,5 +127,4 @@ app:
         description: OneCX Shell Backend for Frontend
         name: OneCX Shell BFF
 ----
-
 

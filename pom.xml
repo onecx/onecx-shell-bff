@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>onecx-shell-bff</artifactId>
+    <name>OneCX Shell Backend For Frontend</name>
     <version>999-SNAPSHOT</version>
 
     <dependencies>

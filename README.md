@@ -1,2 +1,2 @@
 # onecx-shell-bff
-OneCx shell BFF
+OneCX Shell Backend-For-Frontend

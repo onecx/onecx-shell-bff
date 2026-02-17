@@ -584,6 +584,8 @@ components:
           type: string
         technology:
           $ref: '#/components/schemas/Technologies'
+        shareScope:
+          type: string
     GetUserProfileResponse:
       type: object
       required:

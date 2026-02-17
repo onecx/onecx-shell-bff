@@ -51,6 +51,7 @@ public interface WorkspaceConfigMapper {
 
     WorkspaceDTO createWorkspace(WorkspaceWrapper workspaceWrapper);
 
+    @Mapping(target = "shareScope", ignore = true) //temporary ignored, tba
     @Mapping(target = "name", ignore = true)
     @Mapping(target = "baseUrl", source = "mfe.remoteBaseUrl")
     @Mapping(target = "remoteEntryUrl", source = "mfe.remoteEntry")

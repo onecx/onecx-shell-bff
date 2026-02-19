@@ -540,6 +540,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/UIEndpoint'
+        shareScope:
+          type: string
     UIEndpoint:
       type: object
       properties:

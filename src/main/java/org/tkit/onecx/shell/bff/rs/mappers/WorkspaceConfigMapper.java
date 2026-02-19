@@ -81,6 +81,7 @@ public interface WorkspaceConfigMapper {
         return productName + "#" + appId + "#" + exposedModule;
     }
 
+    @Mapping(target = "shareScope", ignore = true) //temporary ignored, tba
     @Mapping(target = "removeEndpointsItem", ignore = true)
     @Mapping(target = "technology", source = "mfe.technology")
     @Mapping(target = "url", source = "mfe.remoteBaseUrl")

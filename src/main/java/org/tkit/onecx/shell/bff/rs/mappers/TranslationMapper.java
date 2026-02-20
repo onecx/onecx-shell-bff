@@ -16,6 +16,5 @@ public interface TranslationMapper {
     GetTranslationsResponseDTO map(GetTranslationsRequestDTO getTranslationsRequestDTO);
 
     @Mapping(target = "translations", ignore = true)
-    @Mapping(target = "removeTranslationsItem", ignore = true)
     TranslationResultDTO map(TranslationsContextDTO contextDTO);
 }

@@ -751,8 +751,7 @@ components:
         version:
           type: string
         translations:
-          type: object
-          additionalProperties: true
+          type: string
     GetTranslationsResponse:
       type: object
       required:

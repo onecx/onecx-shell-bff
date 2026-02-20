@@ -732,8 +732,8 @@ components:
     GetTranslationsRequest:
       type: object
       required:
-        - appId
-        - productName
+        - locale
+        - context
       properties:
         locale:
           type: string

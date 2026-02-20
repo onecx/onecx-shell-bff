@@ -17,6 +17,7 @@
             "userProfile": ["read", "write", "delete"],
             "permission": ["read"],
             "parameter": ["read"],
+            "translation": ["read"],
             "permissions": ["admin-write","admin-read"]
           }
         },

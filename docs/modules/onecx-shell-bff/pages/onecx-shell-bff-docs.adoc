@@ -114,6 +114,8 @@ app:
             read: permission on all GET requests and POST search
           parameter:
             read: permission on all GET requests and POST search
+          translation:
+            read: permission on all GET requests and POST search
     keycloak:
       client:
         enabled: true

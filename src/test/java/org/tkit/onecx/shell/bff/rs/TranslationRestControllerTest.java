@@ -16,7 +16,6 @@ import org.mockserver.model.JsonBody;
 import org.tkit.onecx.shell.bff.rs.controllers.TranslationRestController;
 
 import gen.org.tkit.onecx.file.storage.client.model.PresignedUrlRequest;
-import gen.org.tkit.onecx.file.storage.client.model.PresignedUrlResponse;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
@@ -41,9 +40,6 @@ class TranslationRestControllerTest extends AbstractTest {
         presignedUrlRequest.setProductName("onecx-shell");
         presignedUrlRequest.setFileName("DE/angular-accelerator-^8.0.0.json");
 
-        PresignedUrlResponse presignedUrlResponse = new PresignedUrlResponse();
-        presignedUrlResponse.setUrl("https://mocked-url/download");
-
         mockServerClient
                 .when(request()
                         .withMethod("POST")
@@ -54,8 +50,8 @@ class TranslationRestControllerTest extends AbstractTest {
                 .respond(
                         HttpResponse.response()
                                 .withStatusCode(200)
-                                .withHeader(APPLICATION_JSON)
-                                .withBody(JsonBody.json(presignedUrlResponse)));
+                                .withHeader("Content-Type", "application/json")
+                                .withBody("{\"url\":\"https://mocked-url/download\"}"));
 
         var output = given()
                 .when()
@@ -88,9 +84,6 @@ class TranslationRestControllerTest extends AbstractTest {
         presignedUrlRequest.setProductName("onecx-shell");
         presignedUrlRequest.setFileName("DE/angular-accelerator-^8.0.0.json");
 
-        PresignedUrlResponse presignedUrlResponse = new PresignedUrlResponse();
-        presignedUrlResponse.setUrl(null);
-
         mockServerClient
                 .when(request()
                         .withMethod("POST")
@@ -101,8 +94,8 @@ class TranslationRestControllerTest extends AbstractTest {
                 .respond(
                         HttpResponse.response()
                                 .withStatusCode(200)
-                                .withHeader(APPLICATION_JSON)
-                                .withBody(JsonBody.json(presignedUrlResponse)));
+                                .withHeader("Content-Type", "application/json")
+                                .withBody("{\"url\":null}"));
 
         var output = given()
                 .when()

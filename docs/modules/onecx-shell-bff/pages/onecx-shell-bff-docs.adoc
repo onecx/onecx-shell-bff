@@ -26,6 +26,7 @@ org.eclipse.microprofile.rest.client.propagateHeaders=apm-principal-token
 %prod.quarkus.rest-client.onecx_permission_svc.url=http://onecx-permission-svc:8080
 %prod.quarkus.rest-client.onecx_parameter_svc.url=http://onecx-parameter-svc:8080
 %prod.quarkus.rest-client.onecx_user_profile_svc.url=http://onecx-user-profile-svc:8080
+%prod.quarkus.rest-client.onecx_file_storage_svc.url=http://onecx-file-storage-svc:8080
 quarkus.http.filter.images.header."Cache-Control"=max-age=432000
 quarkus.http.filter.images.matches=/themes/*
 quarkus.openapi-generator.codegen.input-base-dir=target/tmp/openapi
@@ -72,6 +73,12 @@ quarkus.openapi-generator.codegen.spec.onecx_parameter_svc_v1_yaml.return-respon
 quarkus.openapi-generator.codegen.spec.onecx_parameter_svc_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 quarkus.openapi-generator.codegen.spec.onecx_parameter_svc_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
 quarkus.openapi-generator.codegen.spec.onecx_parameter_svc_v1_yaml.enable-security-generation=false
+quarkus.openapi-generator.codegen.spec.onecx_file_storage_svc_external_v1_yaml.config-key=onecx_file_storage_svc
+quarkus.openapi-generator.codegen.spec.onecx_file_storage_svc_external_v1_yaml.base-package=gen.org.tkit.onecx.file.storage.client
+quarkus.openapi-generator.codegen.spec.onecx_file_storage_svc_external_v1_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_file_storage_svc_external_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_file_storage_svc_external_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_file_storage_svc_external_v1_yaml.enable-security-generation=false
 %prod.quarkus.rest-client.onecx_workspace_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_theme_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_product_store_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter

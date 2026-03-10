@@ -89,8 +89,8 @@ h| Version
 | onecx-permissions
 
 | https://onecx.github.io/docs/onecx-quarkus/current/onecx-quarkus/onecx-permissions.html[Link]
-| https://github.com/onecx/onecx-quarkus/blob/2.3.0/docs/modules/onecx-quarkus/pages/includes/onecx-permissions.adoc[Link]
-| 2.3.0
+| https://github.com/onecx/onecx-quarkus/blob/2.4.0/docs/modules/onecx-quarkus/pages/includes/onecx-permissions.adoc[Link]
+| 2.4.0
 
 | quarkus-oidc
 
@@ -108,7 +108,7 @@ h| Version
 
 | https://onecx.github.io/docs/onecx-quarkus/current/onecx-quarkus/onecx-core.html[Link]
 | 
-| 2.3.0
+| 2.4.0
 
 | quarkus-micrometer-registry-prometheus
 

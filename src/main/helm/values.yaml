@@ -23,7 +23,7 @@ app:
         enabled: true
         spec:
           kcConfig:
-            defaultClientScopes: [ ocx-sl:all, ocx-ws:read, ocx-th:read, ocx-ps:read, ocx-pm:read, ocx-up:read, ocx-pa-ext:read, ocx-pm:read ]
+            defaultClientScopes: [ ocx-sl:all, ocx-ws:read, ocx-th:read, ocx-ps:read, ocx-pm:read, ocx-up:read, ocx-pa-ext:read, ocx-pm:read, ocx-fs:read ]
     microservice:
       spec:
         description: OneCX Shell Backend for Frontend

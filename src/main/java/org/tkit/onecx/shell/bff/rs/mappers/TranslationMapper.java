@@ -12,8 +12,8 @@ import gen.org.tkit.onecx.shell.bff.rs.internal.model.TranslationsContextDTO;
 @Mapper
 public interface TranslationMapper {
 
-    @Mapping(target = "applicationId", expression = "java(\"onecx-shell-bff\")")
-    @Mapping(target = "productName", expression = "java(\"onecx-shell\")")
+    @Mapping(target = "applicationId", constant = "onecx-shell-bff")
+    @Mapping(target = "productName", constant = "onecx-shell")
     @Mapping(target = "fileName", expression = "java(getTranslationsRequestDTO.getLocale() + \"/\" + translationsContextDTO.getArtifact() + \"-\" + translationsContextDTO.getVersion() + \".json\")")
     PresignedUrlRequest map(TranslationsContextDTO translationsContextDTO, GetTranslationsRequestDTO getTranslationsRequestDTO);
 

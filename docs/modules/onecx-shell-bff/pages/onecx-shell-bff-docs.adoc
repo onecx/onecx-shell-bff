@@ -85,6 +85,7 @@ quarkus.openapi-generator.codegen.spec.onecx_file_storage_svc_external_v1_yaml.e
 %prod.quarkus.rest-client.onecx_permission_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_parameter_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_user_profile_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.rest-client.onecx_file_storage_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.oidc-client.client-id=${quarkus.application.name}
 ----
 ====

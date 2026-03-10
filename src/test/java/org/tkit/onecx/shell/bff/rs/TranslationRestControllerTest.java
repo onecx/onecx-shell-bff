@@ -2,7 +2,7 @@ package org.tkit.onecx.shell.bff.rs;
 
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.mockserver.matchers.MatchType.ONLY_MATCHING_FIELDS;
+import static org.mockserver.model.HttpRequest.request;
 
 import java.util.List;
 
@@ -11,8 +11,11 @@ import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
+import org.mockserver.model.HttpResponse;
+import org.mockserver.model.JsonBody;
 import org.tkit.onecx.shell.bff.rs.controllers.TranslationRestController;
 
+import gen.org.tkit.onecx.file.storage.client.model.PresignedUrlRequest;
 import gen.org.tkit.onecx.shell.bff.rs.internal.model.*;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
@@ -32,22 +35,20 @@ class TranslationRestControllerTest extends AbstractTest {
         requestDTO.setLocale("DE");
         requestDTO.setContext(List.of(new TranslationsContextDTO().artifact("angular-accelerator").version("^8.0.0")));
 
-        // expected body request for presigned-url
-        String expectedBody = "{" +
-                "\"applicationId\":\"onecx-shell-bff\"," +
-                "\"productName\":\"onecx-shell\"," +
-                "\"fileName\":\"DE/angular-accelerator-^8.0.0.json\"}";
+        PresignedUrlRequest presignedUrlRequest = new PresignedUrlRequest();
+        presignedUrlRequest.setApplicationId("onecx-shell-bff");
+        presignedUrlRequest.setProductName("onecx-shell");
+        presignedUrlRequest.setFileName("DE/angular-accelerator-^8.0.0.json");
 
         mockServerClient
-                .when(
-                        org.mockserver.model.HttpRequest.request()
-                                .withMethod("POST")
-                                .withPath("/v1/file-storage/presigned/download")
-                                .withHeader(APM_HEADER_PARAM, ADMIN)
-                                .withBody(org.mockserver.model.JsonBody.json(expectedBody, ONLY_MATCHING_FIELDS)))
+                .when(request()
+                        .withMethod("POST")
+                        .withPath("/v1/file-storage/presigned/download")
+                        .withHeader(APM_HEADER_PARAM, ADMIN)
+                        .withBody(JsonBody.json(presignedUrlRequest)))
                 .withId("mockPresignedUrl")
                 .respond(
-                        org.mockserver.model.HttpResponse.response()
+                        HttpResponse.response()
                                 .withStatusCode(200)
                                 .withHeader("Content-Type", "application/json")
                                 .withBody("{\"url\":\"https://mocked-url/download\"}"));
@@ -78,21 +79,20 @@ class TranslationRestControllerTest extends AbstractTest {
         requestDTO.setLocale("DE");
         requestDTO.setContext(List.of(new TranslationsContextDTO().artifact("angular-accelerator").version("^8.0.0")));
 
-        String expectedBody = "{" +
-                "\"applicationId\":\"onecx-shell-bff\"," +
-                "\"productName\":\"onecx-shell\"," +
-                "\"fileName\":\"DE/angular-accelerator-^8.0.0.json\"}";
+        PresignedUrlRequest presignedUrlRequest = new PresignedUrlRequest();
+        presignedUrlRequest.setApplicationId("onecx-shell-bff");
+        presignedUrlRequest.setProductName("onecx-shell");
+        presignedUrlRequest.setFileName("DE/angular-accelerator-^8.0.0.json");
 
         mockServerClient
-                .when(
-                        org.mockserver.model.HttpRequest.request()
-                                .withMethod("POST")
-                                .withPath("/v1/file-storage/presigned/download")
-                                .withHeader(APM_HEADER_PARAM, ADMIN)
-                                .withBody(org.mockserver.model.JsonBody.json(expectedBody, ONLY_MATCHING_FIELDS)))
+                .when(request()
+                        .withMethod("POST")
+                        .withPath("/v1/file-storage/presigned/download")
+                        .withHeader(APM_HEADER_PARAM, ADMIN)
+                        .withBody(JsonBody.json(presignedUrlRequest)))
                 .withId("mockPresignedUrlNull")
                 .respond(
-                        org.mockserver.model.HttpResponse.response()
+                        HttpResponse.response()
                                 .withStatusCode(200)
                                 .withHeader("Content-Type", "application/json")
                                 .withBody("{\"url\":null}"));

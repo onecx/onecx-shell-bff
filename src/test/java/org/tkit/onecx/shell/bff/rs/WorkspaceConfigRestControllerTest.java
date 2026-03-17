@@ -380,6 +380,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                         .remoteEntry("/remoteEntry.js")
                         .technology("ANGULAR")
                         .type(MicrofrontendTypePSV1.MODULE)
+                        .shareScope("shareScopeX")
                         .endpoints(List.of(new UIEndpointPSV1().name("endpoint1").path("/endpoint1"),
                                 new UIEndpointPSV1().name("endpoint2").path("/endpoint2"))))
                 .addMicrofrontendsItem(new LoadProductMicrofrontendPSV1()
@@ -388,6 +389,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
                         .remoteBaseUrl("/remoteBaseUrl")
                         .remoteEntry("/remoteEntry.js")
                         .technology("WEBCOMPONENTMODULE")
+                        .shareScope("shareScopeY")
                         .type(MicrofrontendTypePSV1.COMPONENT)
                         .endpoints(List.of(new UIEndpointPSV1().name("endpoint3").path("/endpoint3")))));
 
@@ -427,6 +429,7 @@ class WorkspaceConfigRestControllerTest extends AbstractTest {
         Assertions.assertEquals("product1#app1#App2Component", output.getComponents().get(0).getName());
         Assertions.assertEquals("app1", output.getComponents().get(0).getAppId());
         Assertions.assertEquals("slot1", output.getSlots().get(0).getName());
+        Assertions.assertEquals("shareScopeY", output.getComponents().get(0).getShareScope());
         Assertions.assertEquals(productResponse.getProducts().get(0).getMicrofrontends().get(0).getEndpoints().size(),
                 output.getRoutes().get(0).getEndpoints().size());
         Assertions.assertEquals("version1", output.getRoutes().get(0).getProductVersion());

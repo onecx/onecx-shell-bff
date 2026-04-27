@@ -22,6 +22,8 @@ import gen.org.tkit.onecx.workspace.client.model.*;
 @Mapper
 public interface WorkspaceConfigMapper {
 
+    @Mapping(target = "removeI18nItem", ignore = true)
+    @Mapping(target = "i18n", ignore = true)
     WorkspaceDTO map(Workspace workspaceInfo);
 
     default RouteDTO mapRoute(MicrofrontendPSV1 mfe, ProductPSV1 product,
@@ -49,6 +51,7 @@ public interface WorkspaceConfigMapper {
         return new LoadWorkspaceConfigResponseDTO().workspace(createWorkspace(workspaceWrapper));
     }
 
+    @Mapping(target = "removeI18nItem", ignore = true)
     WorkspaceDTO createWorkspace(WorkspaceWrapper workspaceWrapper);
 
     @Mapping(target = "shareScope", source = "mfe.shareScope")

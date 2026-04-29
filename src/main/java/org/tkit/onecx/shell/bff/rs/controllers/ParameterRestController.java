@@ -41,7 +41,7 @@ public class ParameterRestController implements ParameterApiService {
         GetParametersResponseDTO responseDTO;
         try (Response response = parametersBffApi.getParametersByProductsAndAppIds(mapper.map(getParametersRequestDTO))) {
             responseDTO = mapper.mapResponse(response.readEntity(ParametersBulkResponse.class));
-        } catch (ClientWebApplicationException ex) {
+        } catch (ClientWebApplicationException _) {
             responseDTO = new GetParametersResponseDTO();
         }
         return Response.status(Response.Status.OK).entity(responseDTO).build();

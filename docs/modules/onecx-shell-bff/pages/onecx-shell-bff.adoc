@@ -7,7 +7,7 @@ h|[.header-title]##Configuration property##
 h|Type
 h|Default
 
-a| [[onecx-shell-bff_onecx-shell-permissions-cache-enabled]] [.property-path]##link:#onecx-shell-bff_onecx-shell-permissions-cache-enabled[`onecx.shell.permissions.cache-enabled`]##
+a| [[onecx-shell-bff_onecx-shell-permissions-cache-enabled]] [.property-path]##link:#onecx-shell-bff_onecx-shell-permissions-cache-enabled[`+++onecx.shell.permissions.cache-enabled+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++onecx.shell.permissions.cache-enabled+++[]
 endif::add-copy-button-to-config-props[]
@@ -28,7 +28,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++true+++`
 
-a| [[onecx-shell-bff_onecx-shell-permissions-key-separator]] [.property-path]##link:#onecx-shell-bff_onecx-shell-permissions-key-separator[`onecx.shell.permissions.key-separator`]##
+a| [[onecx-shell-bff_onecx-shell-permissions-key-separator]] [.property-path]##link:#onecx-shell-bff_onecx-shell-permissions-key-separator[`+++onecx.shell.permissions.key-separator+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++onecx.shell.permissions.key-separator+++[]
 endif::add-copy-button-to-config-props[]

@@ -523,6 +523,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ThemeOverride'
+        fonts:
+          type: string
+        customCssVariables:
+          type: string  
     ThemeOverride:
       type: object
       properties:
